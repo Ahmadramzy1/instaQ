@@ -32,12 +32,6 @@ instaQ is a single-file web app that connects to a [Kick](https://kick.com) chat
 2. Type the Kick channel name (or chatroom ID) and press **Connect**.
 3. Links that appear in chat start playing automatically.
 
-You can also skip the login form by opening the page with a channel in the URL:
-
-```
-instaQ.html?c=channelname
-```
-
 ## Keyboard shortcuts
 
 | Key | Action |
