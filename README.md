@@ -6,7 +6,7 @@
 
 **English** · [فارسی](README.fa.md)
 
-*Dedicated to the good kids of Iran*
+*Dedicated to the good People of Iran*
 
 </div>
 
