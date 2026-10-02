@@ -336,8 +336,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const lsGet=k=>{try{return localStorage.getItem(k)}catch{return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch{}};
 const lsDel=k=>{try{localStorage.removeItem(k)}catch{}};
-const MAXQ=150,MAXR=3,DEF_PUSHER='32cbd69e4b950bf97679';
-let cur=-1,ws=null,retry=0,room=0,live=false,gen=0,rtT=0,auto=true,loop=false,muted=false,rate=1,drag=false,V=null,eh=780,locked=false,running=0,fx=true,svT=0,lastP=null,toastT=0;
+const MAXQ=150,MAXR=3,EMB_MS=60000,DEF_PUSHER='32cbd69e4b950bf97679';
+let cur=-1,ws=null,retry=0,room=0,live=false,gen=0,rtT=0,auto=true,loop=false,muted=false,rate=1,drag=false,V=null,eh=780,locked=false,running=0,fx=true,svT=0,lastP=null,toastT=0,embT=0,embAt=0;
 let capLimit=parseInt(lsGet('cap_limit')||'0',10)||0,addedCount=parseInt(lsGet('cap_added')||'0',10)||0,userCap=parseInt(lsGet('cap_peruser')||'0',10)||0;
 const IC={play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',pause:'<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>'};
 const EMPTY_I='<div class="ei"><svg viewBox="0 0 64 64" width="78" height="78"><defs><linearGradient id="eg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b7cf6"/><stop offset="1" stop-color="#5b8cff"/></linearGradient></defs><rect x="4" y="4" width="56" height="56" rx="18" fill="url(#eg)"/><path d="M26 21l19 11-19 11z" fill="#fff"/></svg></div>';
@@ -454,13 +454,13 @@ function parse(u){u=u.replace(/[.,!?)\]]+$/,'');if(!/^https?:\/\//i.test(u))u='h
  return null}
 const nxt=()=>{for(let i=cur+1;i<Q.length;i++)if(!Q[i].seen&&Q[i].t!=='story')return i;return -1};
 /* is the player free to take a new item? */
-function idle(){if(cur<0)return true;const c=Q[cur];if(!c)return true;if(c.emb)return false;if(V)return V.ended;return c.t==='story'||c.st==='fail'||!!c.seen}
+function idle(){if(cur<0)return true;const c=Q[cur];if(!c)return true;if(c.emb)return !loop&&Date.now()-embAt>=EMB_MS;if(V)return V.ended;return c.t==='story'||c.st==='fail'||!!c.seen}
 function scan(text,user,ts){if(locked)return;
  for(const raw of text.match(RX)||[]){
   if(capLimit>0&&addedCount>=capLimit)break;
   const l=parse(raw);if(!l)continue;
   const k=l.t+':'+l.c;if(seen.has(k))continue;
-  if(userCap>0&&Q.filter(x=>x.user===user).length>=userCap){toast(t('userCapReached')(user));continue}
+  if(userCap>0&&Q.filter(x=>x.user===user&&!x.seen).length>=userCap){toast(t('userCapReached')(user));continue}
   seen.add(k);
   const it={...l,user,ts:ts?new Date(ts):new Date(),st:l.t==='story'?'link':'load',fresh:1,bad:[],tried:0,total:0,retried:0,noEmb:0,via:'direct'};
   Q.push(it);
@@ -586,7 +586,7 @@ const saveSoon=()=>{clearTimeout(svT);svT=setTimeout(saveQueue,500)};
 function saveQueue(){lsSet('queue',JSON.stringify(Q.map(it=>({t:it.t,c:it.c,u:it.u,share:it.share?1:0,user:it.user,ts:it.ts.toISOString(),seen:!!it.seen}))))}
 function loadQueue(){try{const raw=lsGet('queue');if(!raw)return;JSON.parse(raw).slice(-MAXQ).forEach(o=>{
  const it={t:o.t,c:o.c,u:o.u,share:o.share?1:0,user:o.user,ts:new Date(o.ts),seen:!!o.seen,st:o.t==='story'?'link':'load',fresh:0,bad:[],tried:0,total:0,retried:0,noEmb:0,via:'direct'};
- Q.push(it);seen.add(it.t+':'+it.c);if(it.t!=='story')enqueue(it)})}catch{}}
+ Q.push(it);seen.add(it.t+':'+it.c);if(it.t!=='story'&&!it.seen)enqueue(it)})}catch{}}
 function head(it){
  $('#nn').textContent='@'+it.user;$('#av').textContent=(it.user[0]||'?').toUpperCase();
  $('#ns').textContent=`${TN()[it.t]||t('post')} · ${it.ts.toLocaleTimeString(LANG==='fa'?'fa-IR':'en-US')}`;
@@ -604,13 +604,15 @@ function swapFx(){const f=$('#frame');f.classList.remove('swap');void f.offsetWi
 function play(i,soft){
  if(i<0||i>=Q.length)return;const it=Q[i],scr=$('#scr');
  if(!soft||i!==cur){const ch=i!==cur;cur=i;render();if(ch)swapFx()}
- head(it);$('#frame').classList.remove('hasemb');
+ head(it);clearTimeout(embT);$('#frame').classList.remove('hasemb');
  if(it.t==='story'){V=null;scr.innerHTML=msg(t('storyTitle'),t('storySub'));return}
- if(it.st==='load'){V=null;const r=RQ.indexOf(it);if(r>0){RQ.splice(r,1);RQ.unshift(it)}
+ if(it.st==='load'){V=null;const r=RQ.indexOf(it);if(r>0){RQ.splice(r,1);RQ.unshift(it)}else if(r<0&&!it.queued&&!it.ac)enqueue(it,true);
   scr.innerHTML=`<div class="msg"><i class="sp"></i><p>${t('preparing')}</p><small id="prog">${prog(it)}</small></div>`;return}
  /* direct source failed once → fall back to Instagram's own player instead of a dead end */
  if(it.st==='fail'&&!it.emb){it.emb=1;toast(t('showEmbed'))}
- if(it.emb){V=null;eh=780;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe allowfullscreen allow="autoplay;fullscreen" src="https://www.instagram.com/${esc(it.t)}/${esc(it.c)}/embed"></iframe></div>`;fitEmb();return}
+ if(it.emb){V=null;eh=780;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe allowfullscreen allow="autoplay;fullscreen" src="https://www.instagram.com/${esc(it.t)}/${esc(it.c)}/embed"></iframe></div>`;fitEmb();
+  /* the embed never reports 'ended', so after EMB_MS count it as watched and move on (unless looping) */
+  embAt=Date.now();embT=setTimeout(()=>{if(Q[cur]!==it||!it.emb||loop)return;it.seen=true;render();const n=nxt();if(auto&&n>=0)play(n)},EMB_MS);return}
  if(it.st==='ok'){if(soft&&V&&V.dataset.k===it.c)return;
   scr.innerHTML=`<video playsinline data-k="${esc(it.c)}" src="${esc(it.src)}"></video>`;const vid=scr.firstChild;V=vid;
   let stall=0;
