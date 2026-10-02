@@ -278,6 +278,13 @@ html[lang="fa"] .qh h2{letter-spacing:0;font-weight:700}
 
 /* ---- wordmark: words rise once, "CULT" shimmers three passes ---- */
 .cultbar{position:relative;z-index:10;display:flex;justify-content:center;padding:12px 16px 0;direction:ltr}
+/* repo link: top corner on both screens, on the same side as the settings */
+.gh{position:absolute;top:12px;width:36px;height:36px;border-radius:var(--radius-control);display:grid;place-items:center;color:var(--ink-soft);background:var(--glass);border:1px solid var(--line);
+ transition:color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),background-color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out)}
+[dir="rtl"] .gh{left:16px}[dir="ltr"] .gh{right:16px}
+.gh:hover{color:var(--brand);border-color:rgb(106 168 236/.45);background:var(--brand-soft)}
+.gh:active{transform:scale(.97)}
+.gh svg{width:18px;height:18px;fill:currentColor}
 .cult{font-family:var(--font-heading);font-weight:500;font-size:24px;line-height:32px;letter-spacing:-.035em;color:var(--ink);user-select:none}
 body.locked .cult{font-size:clamp(44px,12vw,76px);line-height:1.05}
 .kinetic-word{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.12em;margin-bottom:-.12em}
@@ -377,7 +384,7 @@ body.locked .foot{justify-content:center}
 <div class="bg" aria-hidden="true"><span class="aurora-blob aurora-a"></span><span class="aurora-blob aurora-b"></span><span class="aurora-blob aurora-c"></span></div>
 <div class="grain" aria-hidden="true"></div>
 <canvas class="dusk" id="dusk" aria-hidden="true"></canvas>
-<div class="cultbar"><div class="cult" role="img" aria-label="BW CULT"><span class="kinetic-word"><span class="kinetic-inner" style="--i:0">BW</span></span> <span class="kinetic-word"><span class="kinetic-inner shimmer" style="--i:1">CULT</span></span></div></div>
+<div class="cultbar"><a class="gh" href="https://github.com/Ahmadramzy1/instaQ" target="_blank" rel="noopener" data-i18n-title="repo" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg></a><div class="cult" role="img" aria-label="BW CULT"><span class="kinetic-word"><span class="kinetic-inner" style="--i:0">BW</span></span> <span class="kinetic-word"><span class="kinetic-inner shimmer" style="--i:1">CULT</span></span></div></div>
 <section class="login" id="login">
  <div class="lgcard glass fade-up">
   <h1 data-i18n="loginTitle"></h1>
@@ -464,7 +471,7 @@ const fmt=s=>isFinite(s)&&s>0?Math.floor(s/60)+':'+String(Math.floor(s%60)).padS
 /* ---- i18n ---- */
 const STR={
  fa:{dir:'rtl',title:'صف اینستاگرام | چت کیک',brand:'صف اینستاگرام',sub:'لینک‌های چت کیک، به ترتیب ارسال',
-  chPrefix:'kick.com/',chPh:'نام چنل یا چت‌روم آیدی',loginTitle:'ورود به چت کیک',loginSub:'نام چنل یا چت‌روم آیدی را وارد کن',changeCh:'تغییر چنل',dedication:'تقدیم به بچه‌های خوب ایران',connect:'اتصال',settings:'تنظیمات',resolver:'مبدل دلخواه',pusherKey:'کلید Pusher',capLimitBtn:'محدودیت تعداد ورودی',userCapBtn:'سقف لینک هر کاربر',clearSeen:'پاک کردن دیده‌شده‌ها',clearList:'پاک کردن کل لیست',
+  chPrefix:'kick.com/',chPh:'نام چنل یا چت‌روم آیدی',loginTitle:'ورود به چت کیک',loginSub:'نام چنل یا چت‌روم آیدی را وارد کن',changeCh:'تغییر چنل',dedication:'تقدیم به بچه‌های خوب ایران',repo:'سورس پروژه در گیت‌هاب',connect:'اتصال',settings:'تنظیمات',resolver:'مبدل دلخواه',pusherKey:'کلید Pusher',capLimitBtn:'محدودیت تعداد ورودی',userCapBtn:'سقف لینک هر کاربر',clearSeen:'پاک کردن دیده‌شده‌ها',clearList:'پاک کردن کل لیست',
   notConnected:'وصل نیست',finding:'در حال اتصال …',notFound:'chat id پیدا نشد؛ عدد chatroom id را جای اسم بنویس',
   connected:'وصل شد',disconnected:'قطع شد؛ اتصال دوباره …',gatewayClosed:'کیک دروازه‌ی چت را بست (خطای 4001)؛ کلید Pusher را در تنظیمات بررسی کن',
   waitTitle:'منتظر لینک اینستاگرام',waitSub:'لینک‌ها به ترتیب ارسال اینجا پخش می‌شوند.',
@@ -490,7 +497,7 @@ const STR={
   cacheCleared:'لیست و کش صفحه کامل پاک شد',
   unseenOf:(a,b)=>`${a} ندیده از ${b}`,newLink:u=>`لینک تازه از @${u}`},
  en:{dir:'ltr',title:'Instagram Queue | Kick Chat',brand:'Instagram Queue',sub:'Kick chat links, in the order they arrive',
-  chPrefix:'kick.com/',chPh:'Channel name or chatroom ID',loginTitle:'Connect to Kick chat',loginSub:'Enter the channel name or chatroom ID',changeCh:'Change channel',dedication:'Dedicated to the good kids of Iran',connect:'Connect',settings:'Settings',resolver:'Custom resolver',pusherKey:'Pusher key',capLimitBtn:'Intake limit',userCapBtn:'Per-user link limit',clearSeen:'Clear watched',clearList:'Clear entire list',
+  chPrefix:'kick.com/',chPh:'Channel name or chatroom ID',loginTitle:'Connect to Kick chat',loginSub:'Enter the channel name or chatroom ID',changeCh:'Change channel',dedication:'Dedicated to the good kids of Iran',repo:'Source on GitHub',connect:'Connect',settings:'Settings',resolver:'Custom resolver',pusherKey:'Pusher key',capLimitBtn:'Intake limit',userCapBtn:'Per-user link limit',clearSeen:'Clear watched',clearList:'Clear entire list',
   notConnected:'Not connected',finding:'Connecting …',notFound:'Chat id not found — try the numeric chatroom id instead',
   connected:'Connected',disconnected:'Disconnected; reconnecting …',gatewayClosed:'Kick closed the chat gateway (4001) — check the Pusher key in settings',
   waitTitle:'Waiting for an Instagram link',waitSub:'Links play here in the order they were sent.',
