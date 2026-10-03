@@ -59,8 +59,9 @@ svg{display:block}
 .menu summary:hover{background:var(--s3);border-color:var(--a1)}
 .menu div{position:absolute;inset-inline-end:0;top:calc(100% + 8px);border-radius:14px;padding:6px;min-width:210px;z-index:20;display:flex;flex-direction:column;animation:pop .2s var(--ease);transform-origin:top}
 @keyframes pop{from{opacity:0;transform:translateY(-6px) scale(.97)}}
-.menu div button{text-align:start;padding:10px 12px;border-radius:9px;transition:background .15s,padding .2s}
-.menu div button:hover{background:var(--s3);padding-inline-start:16px}
+.menu div :is(button,a){display:flex;align-items:center;gap:10px;text-align:start;text-decoration:none;color:inherit;padding:10px 12px;border-radius:9px;transition:background .15s,padding .2s}
+.menu div :is(button,a):hover{background:var(--s3);padding-inline-start:16px}
+.menu div svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
 .menu div button[hidden]{display:none}
 .menu div hr{border:0;border-top:1px solid var(--border);margin:4px 6px}
 .menu div .dng{color:var(--danger)}
@@ -121,7 +122,8 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 370px;
 .ib svg{width:18px;height:18px;fill:currentColor}
 .ib:hover{transform:translateY(-3px)}
 .ib:active{transform:scale(.92)}
-.ib small{font-size:9px;display:block;margin-top:-2px}
+.ib svg.st{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ib svg.st text{fill:currentColor;stroke:none;font:700 9px var(--font-mono)}
 .ib.pp{width:54px;height:54px;color:#fff;border:0;background:transparent;box-shadow:none}
 .ib.pp svg{width:22px;height:22px}
 .ib.pp:hover{filter:brightness(1.1);transform:translateY(-3px) scale(1.04)}
@@ -308,9 +310,6 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;padding:14p
 /* Update login card */
 .lgcard{background:rgba(14,22,36,.75);border:1px solid rgba(120,160,220,.12);box-shadow:0 40px 100px -40px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.05);padding:42px 32px 30px;border-radius:28px;gap:20px}
 .lgcard::before{content:'';display:block;width:48px;height:5px;margin:0 auto 6px;border-radius:99px;background:linear-gradient(90deg,#4f8ef7,#3b8af5)}
-/* Repo link button */
-.repoLink{position:fixed;bottom:14px;inset-inline-start:18px;z-index:30;padding:8px 14px;border-radius:99px;font-size:11px;font-weight:700;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.2);color:#7aa2f7;text-decoration:none;font-family:'JetBrains Mono',monospace;transition:background .2s,border-color .2s,transform .2s;white-space:nowrap}
-.repoLink:hover{background:rgba(79,142,247,.2);border-color:rgba(79,142,247,.5);transform:translateY(-2px)}
 /* ---- player controls: no box; a gradient+blur veil rises on hover and fades out fast on leave ---- */
 .frame .dock{position:absolute;bottom:0;inset-inline:0;z-index:3;display:flex;flex-direction:column;gap:10px;padding:64px 22px 14px;pointer-events:none}
 .frame .dock::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(to top,rgba(3,7,13,.88),rgba(3,7,13,.5) 50%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);-webkit-mask-image:linear-gradient(to top,#000 40%,transparent);mask-image:linear-gradient(to top,#000 40%,transparent);transition:opacity .3s ease}
@@ -318,6 +317,14 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;padding:14p
 .frame.live.idle .dock:not(:hover):not(:has(:focus-visible))::before{opacity:0;transition-duration:.15s}
 .frame.live.idle .dock:not(:hover):not(:has(:focus-visible))>*{opacity:0;transform:translateY(10px);pointer-events:none;transition-duration:.15s}
 @media(max-width:860px){.frame .dock{padding:56px 14px 12px}}
+/* ---- button icons ---- */
+.chip,.go,.lnk,#langBtn,.acts button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.chip svg,.go svg,.lnk svg,#langBtn svg,.acts svg,#open svg{width:15px;height:15px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.go svg{width:17px;height:17px}
+#spv{direction:ltr}
+.qh .grp{gap:2px}.qh .chip{padding:0 8px;gap:5px}
+.chip .i2{display:none}.chip[aria-pressed="true"] .i1{display:none}.chip[aria-pressed="true"] .i2{display:block}
+#frame:fullscreen #fs .i1{display:none}#frame:fullscreen #fs .i2{display:block}
 </style>
 </head>
 <body class="locked">
@@ -327,9 +334,9 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;padding:14p
   <h1 data-i18n="loginTitle"></h1>
   <p data-i18n="loginSub"></p>
   <label class="in lin"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><input id="ch" data-i18n-ph="chPh" autocomplete="off" spellcheck="false"></label>
-  <button class="go" id="go" data-i18n="connect"></button>
+  <button class="go" id="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg><span data-i18n="connect"></span></button>
   <div id="loginMsg" class="lmsg" role="status" aria-live="polite"></div>
-  <div class="lrow"><button class="lnk" id="pk2" type="button" data-i18n="pusherKey"></button><button class="lnk" id="langBtn2" type="button"></button></div>
+  <div class="lrow"><button class="lnk" id="pk2" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/><circle cx="7.5" cy="15.5" r="5.5"/></svg><span data-i18n="pusherKey"></span></button><button class="lnk" id="langBtn2" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span id="lgt2"></span></button></div>
  </div>
 </section>
 <header class="top glass">
@@ -339,14 +346,16 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;padding:14p
  </div>
  <span id="st" class="pill"><i></i><span id="stt"></span></span>
  <div class="tools">
-  <button class="icon-btn" id="langBtn" type="button">EN</button>
-  <details class="menu"><summary><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.82.66.66 0 0 1-.66.66h-2.66a.66.66 0 0 1-.66-.66 1.65 1.65 0 0 0-1-1.82 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.82-.33.66.66 0 0 1-.66.66H4.66a.66.66 0 0 1-.66-.66 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1 1.82l.06.06a2 2 0 0 1 0 2.83z"/></svg> <span data-i18n="settings"></span></summary><div class="glass">
+  <button class="icon-btn" id="langBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span id="lgt">EN</span></button>
+  <details class="menu"><summary><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> <span data-i18n="settings"></span></summary><div class="glass">
    <button id="rs" data-i18n="resolver" hidden></button>
    <button id="pk" data-i18n="pusherKey" hidden></button>
-   <button id="chg" data-i18n="changeCh"></button>
+   <button id="chg"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg><span data-i18n="changeCh"></span></button>
    <hr>
-   <button id="cls" data-i18n="clearSeen"></button>
-   <button id="clr" class="dng" data-i18n="clearList"></button>
+   <button id="cls"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg><span data-i18n="clearSeen"></span></button>
+   <button id="clr" class="dng"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/></svg><span data-i18n="clearList"></span></button>
+   <hr>
+   <a id="gh" href="https://github.com/Ahmadramzy1/instaQ" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg><span data-i18n="github"></span></a>
   </div></details>
  </div>
 </header>
@@ -355,29 +364,29 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:18px;padding:14p
   <div class="frame" id="frame"><div class="scr" id="scr"></div>
   <div class="now">
    <div class="who"><div class="av" id="av"></div><div style="min-width:0"><b id="nn">—</b><small id="ns"></small></div></div>
-   <div class="nr"><span class="posb" id="pos"></span><button class="ib" id="rt" data-i18n-title="retry" hidden><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 12a10 10 0 1 1-3.7-7.6M22 4v4h-4"/><path d="M3.3 7.3l3.7 3.7"/></svg></button><a id="open" target="_blank" rel="noopener" hidden><span data-i18n="openInsta"></span><span aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17l10-10M7 7h10v10"/></svg></span></a></div>
+   <div class="nr"><span class="posb" id="pos"></span><button class="ib" id="rt" data-i18n-title="retry" hidden><svg class="st" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button><a id="open" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></svg><span data-i18n="openInsta"></span></a></div>
   </div>
   <div class="dock">
    <div class="tl"><span id="tc">0:00</span><div class="bar"><div class="bf" id="bf"></div><input type="range" id="sk" min="0" max="1000" value="0" step="1" aria-label="timeline"><span class="tip" id="tip">0:00</span></div><span id="td">0:00</span></div>
    <div class="row">
     <div class="grp ctl">
      <button class="ib" id="pv" data-i18n-title="prevTitle"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6L18 18V6z"/></svg></button>
-     <button class="ib" id="b5" data-i18n-title="back5"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20l-8-8 8-8"/><path d="M4 12h16"/></svg><small>5</small></button>
+     <button class="ib" id="b5" data-i18n-title="back5"><svg class="st" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><text x="12" y="15.4" text-anchor="middle">5</text></svg></button>
      <button class="ib pp" id="pp" data-i18n-title="playPause"></button>
-     <button class="ib" id="f5" data-i18n-title="fwd5"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 4l8 8-8 8"/><path d="M20 12H4"/></svg><small>5</small></button>
+     <button class="ib" id="f5" data-i18n-title="fwd5"><svg class="st" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><text x="12" y="15.4" text-anchor="middle">5</text></svg></button>
      <button class="ib" id="nx" data-i18n-title="nextTitle"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
     </div>
-    <div class="grp"><button class="chip" id="sp" data-i18n-title="speedTitle">1×</button><button class="chip" id="lp" aria-pressed="false" data-i18n="repeat"></button><button class="chip" id="au" aria-pressed="true" data-i18n="autoplay"></button><button class="chip" id="mu" aria-pressed="false" title="M" data-i18n="mute"></button><button class="chip" id="fs" title="F" data-i18n="fullscreen"></button></div>
+    <div class="grp"><button class="chip" id="sp" data-i18n-title="speedTitle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg><span id="spv">1×</span></button><button class="chip" id="lp" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg><span data-i18n="repeat"></span></button><button class="chip" id="au" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z"/></svg><span data-i18n="autoplay"></span></button><button class="chip" id="mu" aria-pressed="false" title="M"><svg class="i1" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg><svg class="i2" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6"/><path d="m17 9 6 6"/></svg><span data-i18n="mute"></span></button><button class="chip" id="fs" title="F"><svg class="i1" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="i2" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span data-i18n="fullscreen"></span></button></div>
    </div>
   </div>
   </div>
  </section>
- <aside class="glass"><div class="qh"><h2><span data-i18n="queue"></span><span id="cnt"></span></h2><div class="grp"><button class="chip" id="hw" aria-pressed="false" data-i18n="unseenOnly"></button><button class="chip lock" id="freeze" aria-pressed="false" data-i18n="freezeIntake"></button></div></div><div id="list"></div></aside>
+ <aside class="glass"><div class="qh"><h2><span data-i18n="queue"></span><span id="cnt"></span></h2><div class="grp"><button class="chip" id="hw" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg><span data-i18n="unseenOnly"></span></button><button class="chip lock" id="freeze" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M10 15V9"/><path d="M14 15V9"/></svg><span data-i18n="freezeIntake"></span></button></div></div><div id="list"></div></aside>
 </main>
 <footer class="foot">
  <div class="fbtns">
-  <button class="fbtn" id="capBtn" type="button"><svg viewBox="0 0 24 24"><path d="M3 4h18l-7 8.5V19l-4 2v-8.5z"/></svg><span data-i18n="capLimitBtn"></span><b class="fv" id="capVal"></b></button>
-  <button class="fbtn" id="userCapBtn" type="button"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.6a3.5 3.5 0 010 6.8M18 14.4c2 .8 3.5 2.7 3.5 5.6"/></svg><span data-i18n="userCapBtn"></span><b class="fv" id="userCapVal"></b></button>
+  <button class="fbtn" id="capBtn" type="button"><svg viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><path d="M8 12h8"/></svg><span data-i18n="capLimitBtn"></span><b class="fv" id="capVal"></b></button>
+  <button class="fbtn" id="userCapBtn" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><span data-i18n="userCapBtn"></span><b class="fv" id="userCapVal"></b></button>
  </div>
  <div class="ded" data-i18n="dedication"></div>
 </footer>
@@ -394,6 +403,7 @@ const MAXQ=150,MAXR=3,DEF_PUSHER='32cbd69e4b950bf97679';
 let cur=-1,ws=null,retry=0,room=0,live=false,gen=0,rtT=0,auto=true,loop=false,muted=false,rate=1,drag=false,V=null,eh=780,locked=false,running=0,svT=0,lastP=null,toastT=0;
 let capLimit=parseInt(lsGet('cap_limit')||'0',10)||0,addedCount=parseInt(lsGet('cap_added')||'0',10)||0,userCap=parseInt(lsGet('cap_peruser')||'0',10)||0,embT=null;
 const IC={play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',pause:'<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>'};
+IC.rt='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>';IC.ig='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></svg>';
 const EMPTY_I='<div class="ei"><svg viewBox="0 0 64 64" width="78" height="78"><defs><linearGradient id="eg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#19dfbd"/><stop offset="1" stop-color="#13c9ac"/></linearGradient></defs><rect x="4" y="4" width="56" height="56" rx="18" fill="url(#eg)"/><path d="M26 21l19 11-19 11z" fill="#fff"/></svg></div>';
 const SEAL_I='<div class="ei seal-i"><img src="https://media.tenor.com/-4RI9tVwDZcAAAAj/torp-the-seal.gif" alt="Torp the seal" style="width:100%;height:100%;object-fit:contain;background:transparent" loading="lazy"></div>';
 
@@ -410,7 +420,7 @@ const fmt=s=>isFinite(s)&&s>0?Math.floor(s/60)+':'+String(Math.floor(s%60)).padS
 /* ---- i18n ---- */
 const STR={
  fa:{dir:'rtl',title:'صف اینستاگرام | چت کیک',brand:'صف اینستاگرام',sub:'لینک‌های چت کیک، به ترتیب ارسال',
-  chPrefix:'kick.com/',chPh:'نام چنل یا چت‌روم آیدی',loginTitle:'ورود به چت کیک',loginSub:'نام چنل یا چت‌روم آیدی را وارد کن',changeCh:'تغییر چنل',dedication:'تقدیم به بچه‌های خوب ایران',connect:'اتصال',settings:'تنظیمات',resolver:'مبدل دلخواه',pusherKey:'کلید Pusher',capLimitBtn:'محدودیت تعداد ورودی',userCapBtn:'سقف لینک هر کاربر',clearSeen:'پاک کردن دیده‌شده‌ها',clearList:'پاک کردن کل لیست',
+  chPrefix:'kick.com/',chPh:'نام چنل یا چت‌روم آیدی',loginTitle:'ورود به چت کیک',loginSub:'نام چنل یا چت‌روم آیدی را وارد کن',changeCh:'تغییر چنل',dedication:'تقدیم به بچه‌های خوب ایران',github:'لینک گیت‌هاب',connect:'اتصال',settings:'تنظیمات',resolver:'مبدل دلخواه',pusherKey:'کلید Pusher',capLimitBtn:'محدودیت تعداد ورودی',userCapBtn:'سقف لینک هر کاربر',clearSeen:'پاک کردن دیده‌شده‌ها',clearList:'پاک کردن کل لیست',
   notConnected:'وصل نیست',finding:'در حال اتصال …',notFound:'chat id پیدا نشد؛ عدد chatroom id را جای اسم بنویس',
   connected:'وصل شد',disconnected:'قطع شد؛ اتصال دوباره …',gatewayClosed:'کیک دروازه‌ی چت را بست (خطای 4001)؛ کلید Pusher را در تنظیمات بررسی کن',
   waitTitle:'منتظر لینک اینستاگرام',waitSub:'لینک‌ها به ترتیب ارسال اینجا پخش می‌شوند.',
@@ -436,7 +446,7 @@ const STR={
   cacheCleared:'لیست و کش صفحه کامل پاک شد',
   unseenOf:(a,b)=>`${a} ندیده از ${b}`,newLink:u=>`لینک تازه از @${u}`},
  en:{dir:'ltr',title:'Instagram Queue | Kick Chat',brand:'Instagram Queue',sub:'Kick chat links, in the order they arrive',
-  chPrefix:'kick.com/',chPh:'Channel name or chatroom ID',loginTitle:'Connect to Kick chat',loginSub:'Enter the channel name or chatroom ID',changeCh:'Change channel',dedication:'Dedicated to the good kids of Iran',connect:'Connect',settings:'Settings',resolver:'Custom resolver',pusherKey:'Pusher key',capLimitBtn:'Intake limit',userCapBtn:'Per-user link limit',clearSeen:'Clear watched',clearList:'Clear entire list',
+  chPrefix:'kick.com/',chPh:'Channel name or chatroom ID',loginTitle:'Connect to Kick chat',loginSub:'Enter the channel name or chatroom ID',changeCh:'Change channel',dedication:'Dedicated to the good kids of Iran',github:'GitHub link',connect:'Connect',settings:'Settings',resolver:'Custom resolver',pusherKey:'Pusher key',capLimitBtn:'Intake limit',userCapBtn:'Per-user link limit',clearSeen:'Clear watched',clearList:'Clear entire list',
   notConnected:'Not connected',finding:'Connecting …',notFound:'Chat id not found — try the numeric chatroom id instead',
   connected:'Connected',disconnected:'Disconnected; reconnecting …',gatewayClosed:'Kick closed the chat gateway (4001) — check the Pusher key in settings',
   waitTitle:'Waiting for an Instagram link',waitSub:'Links play here in the order they were sent.',
@@ -474,7 +484,7 @@ function applyLang(l){LANG=l;lsSet('ui_lang',l);const d=STR[l];
  document.querySelectorAll('[data-i18n-ph]').forEach(e=>e.placeholder=d[e.dataset.i18nPh]);
  document.querySelectorAll('[data-i18n-title]').forEach(e=>e.title=d[e.dataset.i18nTitle]);
  $('#sk').setAttribute('aria-label',d.timeline);
- $('#langBtn').textContent=$('#langBtn2').textContent=d.langSwitch;
+ $('#lgt').textContent=$('#lgt2').textContent=d.langSwitch;
  paintStatus();
  if(cur>=0&&Q[cur]){head(Q[cur]);play(cur,1)}else{resetHead();idleScreen()}
  render()}
@@ -666,13 +676,13 @@ function play(i,soft){
   vid.addEventListener('playing',()=>clearTimeout(stall),{once:true});
   vid.muted=muted;vid.loop=loop;vid.playbackRate=rate;vid.onclick=()=>$('#pp').click();
   vid.play().catch(()=>{if(V!==vid)return;vid.muted=true;vid.play().catch(()=>{})});return}
- V=null;scr.innerHTML=msg(t('failTitle'),t('failSub'),`<div class="acts"><button data-a="rt">${t('retry')}</button><button data-a="emb">${t('showEmbed')}</button></div>`)}
+ V=null;scr.innerHTML=msg(t('failTitle'),t('failSub'),`<div class="acts"><button data-a="rt">${IC.rt}${t('retry')}</button><button data-a="emb">${IC.ig}${t('showEmbed')}</button></div>`)}
 function fitEmb(){const e=$('.emb'),s=$('#scr');if(!e)return;
  const k=Math.min(2,s.clientWidth/540,s.clientHeight/eh);e.style.height=eh+'px';e.style.transform=`translate(-50%,-50%) scale(${k})`}
 addEventListener('message',e=>{if(!/instagram\.com$/.test(e.origin))return;
  try{const d=typeof e.data==='string'?JSON.parse(e.data):e.data;const h=d?.details?.height;if(d?.type==='MEASURE'&&h>100){eh=h;fitEmb()}}catch{}});
 addEventListener('resize',fitEmb);
-$('#scr').onclick=e=>{const a=e.target.dataset.a,it=Q[cur];if(!it)return;if(a==='rt')redo(it);if(a==='emb'){it.emb=1;play(cur,1)}};
+$('#scr').onclick=e=>{const a=e.target.closest('[data-a]')?.dataset.a,it=Q[cur];if(!it)return;if(a==='rt')redo(it);if(a==='emb'){it.emb=1;play(cur,1)}};
 $('#rt').onclick=()=>{const it=Q[cur];if(it&&it.st==='fail')redo(it)};
 $('#list').onclick=e=>{const d=e.target.closest('.it');if(!d)return;if(e.target.closest('.x')){removeAt(+d.dataset.i,true);return}play(+d.dataset.i)};
 $('#list').onkeydown=e=>{const d=e.target.closest('.it');if(!d)return;if(e.key==='Enter')play(+d.dataset.i);if(e.key==='Delete'){e.stopPropagation();removeAt(+d.dataset.i,true)}};
@@ -682,7 +692,7 @@ $('#pp').onclick=()=>{if(V)V.paused?V.play().catch(()=>{}):V.pause()};
 $('#b5').onclick=()=>{if(V)V.currentTime-=5};$('#f5').onclick=()=>{if(V)V.currentTime+=5};
 const tg=(id,fn)=>$(id).onclick=e=>{const b=e.currentTarget,p=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',p);fn(p)};
 tg('#au',p=>auto=p);tg('#lp',p=>{loop=p;if(V)V.loop=p});tg('#mu',p=>{muted=p;if(V)V.muted=p});tg('#hw',render);tg('#freeze',p=>locked=p);
-$('#sp').onclick=e=>{const r=[1,1.25,1.5,2];rate=r[(r.indexOf(rate)+1)%4];e.currentTarget.textContent=rate+'×';if(V)V.playbackRate=rate};
+$('#sp').onclick=e=>{const r=[1,1.25,1.5,2];rate=r[(r.indexOf(rate)+1)%4];$('#spv').textContent=rate+'×';if(V)V.playbackRate=rate};
 const fs=()=>document.fullscreenElement?document.exitFullscreen():$('#frame').requestFullscreen?.();
 $('#fs').onclick=fs;
 const closeMenu=()=>$('.menu').removeAttribute('open');
@@ -739,11 +749,6 @@ if(listEl){
  listEl.addEventListener('mousemove',e=>{if(window.matchMedia('(hover:none)').matches||window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;updateMouseLight(e)},{passive:true});
  listEl.addEventListener('mouseleave',()=>updateMouseLight(null),{passive:true});
 }
-/* Repo links */
-(function addRepoLinks(){
- const repo='https://github.com/Ahmadramzy1/instaQ';
- const ln=document.createElement('a');ln.href=repo;ln.className='repoLink';ln.target='_blank';ln.rel='noopener';ln.textContent='instaQ / GitHub';document.body.appendChild(ln);
-})();
 
 /* ---- init ---- */
 loadQueue();
