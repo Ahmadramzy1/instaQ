@@ -24,7 +24,7 @@ instaQ is a single-file web app that connects to a [Kick](https://kick.com) chat
 - **Player controls** — seekable timeline with hover time, previous / next, ±5 s, play / pause, speed (1× / 1.25× / 1.5× / 2×), loop, autoplay, mute, fullscreen.
 - **Queue tools** — "unseen only" filter, "freeze intake", remove single items, clear watched, clear all.
 - **Limits (bottom bar)** — **Intake limit** (max total links allowed in) and **Per-user link limit** (max links from one user in the queue at a time). The current values are shown on the buttons.
-- **Themes and languages** — dark / light theme and Persian (RTL) / English UI.
+- **Design and languages** — dark "Dusk" design (glass panels, blue accent) and Persian (RTL) / English UI.
 
 ## Usage
 
