@@ -28,9 +28,23 @@ instaQ is a single-file web app that connects to a [Kick](https://kick.com) chat
 
 ## Usage
 
-1. Download `instaQ.html` and open it in a modern browser — or host it on GitHub Pages.
+1. [Open instaQ online](https://ahmadramzy1.github.io/instaQ/) in a modern browser, or download `instaQ.html` and open it locally.
 2. Type the Kick channel name (or chatroom ID) and press **Connect**.
 3. Links that appear in chat start playing automatically.
+
+### OBS and direct channel links
+
+Add `?c=CHANNEL_NAME` to the URL to connect to a channel automatically, for example `https://ahmadramzy1.github.io/instaQ/instaQ.html?c=CHANNEL_NAME`. Replace `CHANNEL_NAME` with the Kick channel name or numeric chatroom ID. Use this URL as an OBS Browser Source. The short `/instaQ/` URL also preserves the channel parameter when redirecting.
+
+### Browser storage
+
+The queue and settings use `localStorage` keys prefixed with `instaq:` so they do not collide with generic keys used by other projects on the same GitHub Pages domain. They survive page refreshes and site updates unless browser storage is cleared. Chrome, OBS and mobile browsers each keep their own data; local-file data does not transfer to the online site.
+
+Older versions used unprefixed keys. This version starts with a fresh queue and settings; it neither imports nor deletes those old keys because they may belong to another app sharing the domain.
+
+### Publishing updates
+
+GitHub Pages is already enabled for this repository. In **Settings → Pages**, use **Deploy from a branch**, branch **main**, folder **/ (root)**. Changes pushed or merged to `main` are published automatically; check the **pages build and deployment** run in Actions for the result. No build step is needed. A cached version may remain visible briefly after deployment; reload without cache if necessary.
 
 ## Keyboard shortcuts
 
