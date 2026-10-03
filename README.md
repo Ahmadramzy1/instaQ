@@ -23,8 +23,10 @@ instaQ is a single-file web app that connects to a [Kick](https://kick.com) chat
 - **Full-height player** — the info bar and controls float over the video and fade out when the mouse leaves the player (after 1 second) or stays idle (3 seconds).
 - **Player controls** — seekable timeline with hover time, previous / next, ±5 s, play / pause, speed (1× / 1.25× / 1.5× / 2×), loop, autoplay, mute, fullscreen.
 - **Queue tools** — "unseen only" filter, "freeze intake", remove single items, clear watched, clear all.
-- **Limits (bottom bar)** — **Intake limit** (max total links allowed in) and **Per-user link limit** (max links from one user in the queue at a time). The current values are shown on the buttons.
-- **Themes and languages** — dark / light theme and Persian (RTL) / English UI.
+- **Limits (bottom bar)** — **Intake limit** (max total links allowed in) and **Per-user link limit** (max links from one user in the queue at a time). The per-user cap only counts unseen links; the queue survives refresh with only unseen items re-processed.
+- **Dusk theme** — a dark-only glass-panel design with blue accent (`#4f8ef7`), Unbounded and JetBrains Mono fonts, SVG icons, mouse light on queue, glowing ring around live player, custom cursor, and a WebGL-animated login background. 3D card tilt has been removed.
+- **Dusk theme** — a dark-only glass-panel design with blue accent (`#4f8ef7`), custom mouse light on the queue, a glowing ring around the live player, and a custom cursor (disabled over video and on touch devices). Settings respect `prefers-reduced-motion`.
+- **Fonts** — Vazirmatn for Persian text, Unbounded for headings, JetBrains Mono for numbers and the repo link.
 
 ## Usage
 
@@ -41,6 +43,13 @@ Add `?c=CHANNEL_NAME` to the URL to connect to a channel automatically, for exam
 The queue and settings use `localStorage` keys prefixed with `instaq:` so they do not collide with generic keys used by other projects on the same GitHub Pages domain. They survive page refreshes and site updates unless browser storage is cleared. Chrome, OBS and mobile browsers each keep their own data; local-file data does not transfer to the online site.
 
 Older versions used unprefixed keys. This version starts with a fresh queue and settings; it neither imports nor deletes those old keys because they may belong to another app sharing the domain.
+
+### Recent fixes and design
+
+- **Embed timeout** — when an Instagram embed player is shown, autoplay now continues to the next link after 60 seconds (unless loop is on).
+- **Per-user cap** — only counts unseen links; seen links don't block the user.
+- **Refresh behavior** — only unseen links are re-processed after refresh.
+- **Dusk redesign** — dark-only, glass panels, blue accent, custom mouse light and glowing ring, WebGL login background, SVG icons, Unbounded + JetBrains Mono fonts. Light theme and 3D card tilt removed.
 
 ### Publishing updates
 
