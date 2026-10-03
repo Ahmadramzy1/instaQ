@@ -333,9 +333,11 @@ body.locked .foot{justify-content:center}
 <script>
 const $=s=>document.querySelector(s),Q=[],seen=new Set(),RQ=[];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const lsGet=k=>{try{return localStorage.getItem(k)}catch{return null}};
-const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch{}};
-const lsDel=k=>{try{localStorage.removeItem(k)}catch{}};
+// GitHub Pages projects share an origin; only access instaQ's own keys.
+const LS_PREFIX='instaq:';
+const lsGet=k=>{try{return localStorage.getItem(LS_PREFIX+k)}catch{return null}};
+const lsSet=(k,v)=>{try{localStorage.setItem(LS_PREFIX+k,v)}catch{}};
+const lsDel=k=>{try{localStorage.removeItem(LS_PREFIX+k)}catch{}};
 const MAXQ=150,MAXR=3,DEF_PUSHER='32cbd69e4b950bf97679';
 let cur=-1,ws=null,retry=0,room=0,live=false,gen=0,rtT=0,auto=true,loop=false,muted=false,rate=1,drag=false,V=null,eh=780,locked=false,running=0,fx=true,svT=0,lastP=null,toastT=0;
 let capLimit=parseInt(lsGet('cap_limit')||'0',10)||0,addedCount=parseInt(lsGet('cap_added')||'0',10)||0,userCap=parseInt(lsGet('cap_peruser')||'0',10)||0;
