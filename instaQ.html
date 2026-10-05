@@ -505,7 +505,7 @@ function parse(u){u=u.replace(/[.,!?)\]]+$/,'');if(!/^https?:\/\//i.test(u))u='h
  return null}
 const nxt=()=>{for(let i=cur+1;i<Q.length;i++)if(!Q[i].seen&&Q[i].t!=='story')return i;return -1};
 /* is the player free to take a new item? */
-function idle(){if(cur<0)return true;const c=Q[cur];if(!c)return true;if(c.emb)return false;if(V)return V.ended;return c.t==='story'||c.st==='fail'||!!c.seen}
+function idle(){if(cur<0)return true;const c=Q[cur];if(!c)return true;if(c.emb)return !embT&&!loop;if(V)return V.ended;return c.t==='story'||c.st==='fail'||!!c.seen}
 function scan(text,user,ts){if(locked)return;
  for(const raw of text.match(RX)||[]){
   if(capLimit>0&&addedCount>=capLimit)break;
@@ -658,7 +658,7 @@ function play(i,soft){
  if(!soft||i!==cur){const ch=i!==cur;cur=i;render();if(ch)swapFx()}
  head(it);$('#frame').classList.remove('hasemb');
  if(it.t==='story'){V=null;scr.innerHTML=msg(t('storyTitle'),t('storySub'));return}
- if(it.st==='load'){V=null;const r=RQ.indexOf(it);if(r>0){RQ.splice(r,1);RQ.unshift(it)}
+ if(it.st==='load'){V=null;const r=RQ.indexOf(it);if(r>0){RQ.splice(r,1);RQ.unshift(it)}else if(r<0&&!it.queued&&!it.ac)enqueue(it,true);
   scr.innerHTML=`<div class="msg"><i class="sp"></i><p>${t('preparing')}</p><small id="prog">${prog(it)}</small></div>`;return}
  /* direct source failed once → fall back to Instagram's own player instead of a dead end */
  if(it.st==='fail'&&!it.emb){it.emb=1;toast(t('showEmbed'))}
