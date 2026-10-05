@@ -24,8 +24,7 @@ instaQ is a single-file web app that connects to a [Kick](https://kick.com) chat
 - **Player controls** — seekable timeline with hover time, previous / next, ±5 s, play / pause, speed (1× / 1.25× / 1.5× / 2×), loop, autoplay, mute, fullscreen.
 - **Queue tools** — "unseen only" filter, "freeze intake", remove single items, clear watched, clear all.
 - **Limits (bottom bar)** — **Intake limit** (max total links allowed in) and **Per-user link limit** (max links from one user in the queue at a time). The per-user cap only counts unseen links; the queue survives refresh with only unseen items re-processed.
-- **Dusk theme** — a dark-only glass-panel design with blue accent (`#4f8ef7`), Unbounded and JetBrains Mono fonts, SVG icons, mouse light on queue, glowing ring around live player, custom cursor, and a WebGL-animated login background. 3D card tilt has been removed.
-- **Dusk theme** — a dark-only glass-panel design with blue accent (`#4f8ef7`), custom mouse light on the queue, a glowing ring around the live player, and a custom cursor (disabled over video and on touch devices). Settings respect `prefers-reduced-motion`.
+- **Dusk theme** — a dark-only glass-panel design with blue accent (`#6aa8ec`), Unbounded and JetBrains Mono fonts, SVG icons, mouse light on queue, glowing ring around live player, custom cursor (disabled over video and on touch devices), and a WebGL-animated login background. Effects respect `prefers-reduced-motion`. 3D card tilt has been removed.
 - **Fonts** — Vazirmatn for Persian text, Unbounded for headings, JetBrains Mono for numbers and the repo link.
 
 ## Usage
