@@ -78,7 +78,7 @@ test('Data Saver keeps a five-item forward window and persists its toggle', () =
 test('Data Saver gates resolver and thumbnail work and cancels work outside the window', () => {
   assert.match(app, /it\.t!=='story'&&inDataWindow\(Q\.indexOf\(it\)\)/);
   assert.match(app, /!inDataWindow\(i\)\|\|it\.st!=='ok'/);
-  assert.match(app, /if\(it\.ac\)it\.ac\.abort\(\)/);
+  assert.match(app, /if\(it\.ac\)\{it\.ac\.abort\(\);it\.ac=null\}/);
   assert.match(app, /if\(sig\.aborted\)\{if\(it\.ac===ac\)it\.ac=null;return\}/);
 });
 
