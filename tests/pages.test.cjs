@@ -66,3 +66,22 @@ test('application JavaScript parses', () => {
   const script = app.match(/<script>([\s\S]*?)<\/script>/)[1];
   assert.doesNotThrow(() => new vm.Script(script));
 });
+
+
+test('Data Saver keeps a five-item forward window and persists its toggle', () => {
+  assert.match(app, /const DATA_WINDOW=5/);
+  assert.match(app, /const dataAnchor=\(\)=>cur<0\?0:cur/);
+  assert.match(app, /i>=dataAnchor\(\)&&i<dataAnchor\(\)\+DATA_WINDOW/);
+  assert.match(app, /lsSet\('data_saver',dataSaver\?'1':'0'\)/);
+});
+
+test('Data Saver gates resolver and thumbnail work and cancels work outside the window', () => {
+  assert.match(app, /it\.t!=='story'&&inDataWindow\(Q\.indexOf\(it\)\)/);
+  assert.match(app, /!inDataWindow\(i\)\|\|it\.st!=='ok'/);
+  assert.match(app, /if\(it\.ac\)it\.ac\.abort\(\)/);
+  assert.match(app, /if\(sig\.aborted\)\{if\(it\.ac===ac\)it\.ac=null;return\}/);
+});
+
+test('moving the current item refreshes the Data Saver window before rendering', () => {
+  assert.match(app, /cur=i;syncDataWindow\(\);render\(\)/);
+});
