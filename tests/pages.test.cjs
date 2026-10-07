@@ -85,3 +85,8 @@ test('Data Saver gates resolver and thumbnail work and cancels work outside the 
 test('moving the current item refreshes the Data Saver window before rendering', () => {
   assert.match(app, /cur=i;syncDataWindow\(\);render\(\)/);
 });
+
+
+test('Data Saver clears aborted resolver ownership so items can resolve after re-entering the window', () => {
+  assert.match(app, /if\(it\.ac\)\{it\.ac\.abort\(\);it\.ac=null\}/);
+});
