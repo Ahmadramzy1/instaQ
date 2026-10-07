@@ -278,16 +278,21 @@ html[lang="fa"] .qh h2{letter-spacing:0;font-weight:700}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* ---- wordmark: words rise once, "CULT" shimmers three passes ---- */
-.cultbar{position:relative;z-index:10;display:flex;justify-content:center;padding:12px 16px 0;direction:ltr}
-/* repo link: top corner on both screens, on the same side as the settings */
-.gh{position:absolute;top:12px;width:36px;height:36px;border-radius:var(--radius-control);display:grid;place-items:center;color:var(--ink-soft);background:var(--glass);border:1px solid var(--line);
+.cultbar{position:relative;z-index:10;display:flex;justify-content:center;direction:ltr}
+body:not(.locked) .cultbar{order:4;padding:0 16px 10px;flex:none}
+body.locked .cultbar{padding:12px 16px 0;flex-direction:column;align-items:center;gap:8px}
+/* repo link: compact header action beside language */
+.gh{width:40px;height:40px;border-radius:999px;display:grid;place-items:center;color:var(--ink-soft);background:var(--glass);border:1px solid var(--line);
  transition:color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),background-color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out)}
-[dir="rtl"] .gh{left:16px}[dir="ltr"] .gh{right:16px}
 .gh:hover{color:var(--brand);border-color:rgb(106 168 236/.45);background:var(--brand-soft)}
 .gh:active{transform:scale(.97)}
 .gh svg{width:18px;height:18px;fill:currentColor}
 .cult{font-family:var(--font-heading);font-weight:500;font-size:24px;line-height:32px;letter-spacing:-.035em;color:var(--ink);user-select:none}
 body.locked .cult{font-size:clamp(44px,12vw,76px);line-height:1.05}
+body:not(.locked) .cult{font-size:16px;line-height:22px;color:var(--muted)}
+.instaq-mark{display:none;font-family:'Unbounded',var(--font-heading);font-size:clamp(22px,5vw,34px);line-height:1;font-weight:600;letter-spacing:-.075em;color:var(--ink);text-shadow:0 8px 28px rgb(106 168 236/.22)}
+.instaq-mark .q{color:var(--brand);font-style:italic;margin-inline-start:.03em}
+body.locked .instaq-mark{display:block}
 .kinetic-word{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.12em;margin-bottom:-.12em}
 .kinetic-inner{display:inline-block;transform:translate3d(0,110%,0);opacity:0;animation:rise var(--dur-reveal) var(--ease-out) forwards;animation-delay:calc(var(--i,0)*55ms + 150ms)}
 .shimmer{background:linear-gradient(100deg,var(--brand-strong) 0%,#eef6ff 35%,var(--brand) 60%,var(--brand-strong) 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -403,7 +408,7 @@ body.locked .foot{justify-content:center}
 <div class="bg" aria-hidden="true"><span class="aurora-blob aurora-a"></span><span class="aurora-blob aurora-b"></span><span class="aurora-blob aurora-c"></span></div>
 <div class="grain" aria-hidden="true"></div>
 <canvas class="dusk" id="dusk" aria-hidden="true"></canvas>
-<div class="cultbar"><a class="gh" href="https://github.com/Ahmadramzy1/instaQ" target="_blank" rel="noopener" data-i18n-title="repo" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg></a><div class="cult" role="img" aria-label="BW CULT"><span class="kinetic-word"><span class="kinetic-inner" style="--i:0">BW</span></span> <span class="kinetic-word"><span class="kinetic-inner shimmer" style="--i:1">CULT</span></span></div></div>
+<div class="cultbar"><div class="cult" role="img" aria-label="BW CULT"><span class="kinetic-word"><span class="kinetic-inner" style="--i:0">BW</span></span> <span class="kinetic-word"><span class="kinetic-inner shimmer" style="--i:1">CULT</span></span></div><div class="instaq-mark" aria-label="instaQ">insta<span class="q">Q</span></div></div>
 <section class="login" id="login">
  <div class="lgcard glass fade-up">
   <h1 data-i18n="loginTitle"></h1>
@@ -421,7 +426,7 @@ body.locked .foot{justify-content:center}
  </div>
  <span id="st" class="pill"><i></i><span id="stt"></span></span>
  <div class="tools">
-  <button class="icon-btn" id="langBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span id="lgt">EN</span></button>
+  <button class="icon-btn" id="langBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span id="lgt">EN</span></button><a class="gh" href="https://github.com/Ahmadramzy1/instaQ" target="_blank" rel="noopener" data-i18n-title="repo" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg></a>
   <details class="menu"><summary><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> <span data-i18n="settings"></span></summary><div class="glass-popup">
    <button id="rs" data-i18n="resolver" hidden></button>
    <button id="pk" data-i18n="pusherKey" hidden></button>
