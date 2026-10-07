@@ -97,3 +97,10 @@ test('playback BW CULT shares the footer row with controls and dedication', () =
   assert.match(app, /\.play-cult \.cult\{font-size:32px;line-height:40px/);
   assert.match(app, /grid-template-columns:minmax\(0,1fr\) auto minmax\(0,1fr\)/);
 });
+
+
+test('login hides the playback BW CULT while keeping the primary login wordmark', () => {
+  assert.match(app, /body\.locked \.play-cult\{display:none\}/);
+  assert.match(app, /<div class="cultbar">/);
+  assert.match(app, /<div class="play-cult"/);
+});
