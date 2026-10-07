@@ -690,7 +690,7 @@ function syncDataWindow(){
    continue;
   }
   const r=RQ.indexOf(it);if(r>=0)RQ.splice(r,1);
-  if(it.ac)it.ac.abort();
+  if(it.ac){it.ac.abort();it.ac=null}
   const v=it.el?.querySelector('.th video');if(v){v.pause();v.removeAttribute('src');try{v.load()}catch{}v.remove()}
   it.tvs=null;
  }
