@@ -90,3 +90,10 @@ test('moving the current item refreshes the Data Saver window before rendering',
 test('Data Saver clears aborted resolver ownership so items can resolve after re-entering the window', () => {
   assert.match(app, /if\(it\.ac\)\{it\.ac\.abort\(\);it\.ac=null\}/);
 });
+
+
+test('playback BW CULT shares the footer row with controls and dedication', () => {
+  assert.match(app, /<footer class="foot">[\s\S]*?<div class="play-cult"[\s\S]*?data-i18n="dedication"/);
+  assert.match(app, /\.play-cult \.cult\{font-size:32px;line-height:40px/);
+  assert.match(app, /grid-template-columns:minmax\(0,1fr\) auto minmax\(0,1fr\)/);
+});
