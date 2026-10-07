@@ -633,6 +633,8 @@ async function resolve(it){
   const r=await Promise.any(jobs.map(p=>p.catch(e=>{it.tried++;upd(it);throw e})));
   src=r.s;via=r.v;
  }catch{}
+ /* Data Saver can cancel work that just moved outside the five-item window. */
+ if(sig.aborted){if(it.ac===ac)it.ac=null;return}
  ac.abort();
  if(it.ac!==ac||it.dropped)return;
  it.ac=null;
