@@ -327,6 +327,8 @@ body.locked .foot{justify-content:center}
 .fbtn{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border-radius:var(--radius-control);border:1px solid var(--line);background:var(--glass);font-weight:600;font-size:13px;color:var(--ink-soft);
  transition:background-color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out)}
 .fbtn:hover{background:var(--glass-strong);border-color:var(--line-strong);color:var(--ink)}
+.fbtn[aria-pressed="true"]{border-color:rgb(106 168 236/.55);background:var(--brand-soft);color:var(--brand-strong)}
+.fbtn[aria-pressed="true"] .fv{background:var(--brand);color:var(--on-brand)}
 .fbtn .ico{color:var(--brand)}
 .fbtn .fv{min-width:28px;padding:2px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:11px;line-height:16px;text-align:center;direction:ltr}
 .ded{font-size:12px;line-height:16px;color:var(--muted);text-align:center}
