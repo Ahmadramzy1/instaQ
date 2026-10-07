@@ -97,3 +97,11 @@ test('playback BW CULT shares the footer row with controls and dedication', () =
   assert.match(app, /\.play-cult \.cult\{font-size:32px;line-height:40px/);
   assert.match(app, /grid-template-columns:minmax\(0,1fr\) auto minmax\(0,1fr\)/);
 });
+
+
+test('login keeps the upper BW CULT mark and hides only the playback footer mark', () => {
+  assert.match(app, /<div class="cultbar"><div class="cult" role="img" aria-label="BW CULT"/);
+  assert.match(app, /body\.locked \.foot \.play-cult\{display:none\}/);
+  assert.match(app, /\.play-cult \.cult\{font-size:32px;line-height:40px/);
+  assert.match(app, /<footer class="foot">[\s\S]*?<div class="play-cult"/);
+});
