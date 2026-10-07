@@ -327,6 +327,8 @@ body.locked .foot{justify-content:center}
 .fbtn{display:flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border-radius:var(--radius-control);border:1px solid var(--line);background:var(--glass);font-weight:600;font-size:13px;color:var(--ink-soft);
  transition:background-color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out)}
 .fbtn:hover{background:var(--glass-strong);border-color:var(--line-strong);color:var(--ink)}
+.fbtn[aria-pressed="true"]{border-color:rgb(106 168 236/.55);background:var(--brand-soft);color:var(--brand-strong)}
+.fbtn[aria-pressed="true"] .fv{background:var(--brand);color:var(--on-brand)}
 .fbtn .ico{color:var(--brand)}
 .fbtn .fv{min-width:28px;padding:2px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:11px;line-height:16px;text-align:center;direction:ltr}
 .ded{font-size:12px;line-height:16px;color:var(--muted);text-align:center}
@@ -460,6 +462,7 @@ body.locked .foot{justify-content:center}
  <div class="fbtns">
   <button class="fbtn" id="capBtn" type="button"><svg viewBox="0 0 24 24"><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><path d="M8 12h8"/></svg><span data-i18n="capLimitBtn"></span><b class="fv figure" id="capVal"></b></button>
   <button class="fbtn" id="userCapBtn" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg><span data-i18n="userCapBtn"></span><b class="fv figure" id="userCapVal"></b></button>
+  <button class="fbtn" id="dataSaverBtn" type="button" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M12 2v20"/><path d="M17 7a5 5 0 0 0-10 0c0 5 10 5 10 10a5 5 0 0 1-10 0"/></svg><span data-i18n="dataSaver"></span><b class="fv figure" id="dataSaverVal">OFF</b></button>
  </div>
  <div class="ded" data-i18n="dedication"></div>
 </footer>
@@ -475,6 +478,10 @@ const lsDel=k=>{try{localStorage.removeItem(LS_PREFIX+k)}catch{}};
 const MAXQ=150,MAXR=3,DEF_PUSHER='32cbd69e4b950bf97679';
 let cur=-1,ws=null,retry=0,room=0,live=false,gen=0,rtT=0,auto=true,loop=false,muted=false,rate=1,drag=false,V=null,eh=780,locked=false,running=0,svT=0,lastP=null,toastT=0;
 let capLimit=parseInt(lsGet('cap_limit')||'0',10)||0,addedCount=parseInt(lsGet('cap_added')||'0',10)||0,userCap=parseInt(lsGet('cap_peruser')||'0',10)||0,embT=null;
+let dataSaver=lsGet('data_saver')==='1';
+const DATA_WINDOW=5;
+const dataAnchor=()=>cur<0?0:cur;
+const inDataWindow=i=>!dataSaver||(i>=dataAnchor()&&i<dataAnchor()+DATA_WINDOW);
 const IC={play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',pause:'<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>'};
 IC.rt='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>';IC.ig='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></svg>';
 const EMPTY_I='<div class="ei"><svg viewBox="0 0 64 64" width="78" height="78"><defs><linearGradient id="eg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a4ccf6"/><stop offset="1" stop-color="#4a8bd4"/></linearGradient></defs><rect x="4" y="4" width="56" height="56" rx="18" fill="url(#eg)"/><path d="M26 21l19 11-19 11z" fill="#06121f"/></svg></div>';
@@ -493,7 +500,7 @@ const fmt=s=>isFinite(s)&&s>0?Math.floor(s/60)+':'+String(Math.floor(s%60)).padS
 /* ---- i18n ---- */
 const STR={
  fa:{dir:'rtl',title:'صف اینستاگرام | چت کیک',brand:'صف اینستاگرام',sub:'لینک‌های چت کیک، به ترتیب ارسال',
-  chPrefix:'kick.com/',chPh:'نام چنل یا چت‌روم آیدی',loginTitle:'ورود به چت کیک',loginSub:'نام چنل یا چت‌روم آیدی را وارد کن',changeCh:'تغییر چنل',dedication:'تقدیم به بچه‌های خوب ایران',repo:'سورس پروژه در گیت‌هاب',github:'لینک گیت‌هاب',connect:'اتصال',settings:'تنظیمات',resolver:'مبدل دلخواه',pusherKey:'کلید Pusher',capLimitBtn:'محدودیت تعداد ورودی',userCapBtn:'سقف لینک هر کاربر',clearSeen:'پاک کردن دیده‌شده‌ها',clearList:'پاک کردن کل لیست',
+  chPrefix:'kick.com/',chPh:'نام چنل یا چت‌روم آیدی',loginTitle:'ورود به چت کیک',loginSub:'نام چنل یا چت‌روم آیدی را وارد کن',changeCh:'تغییر چنل',dedication:'تقدیم به بچه‌های خوب ایران',repo:'سورس پروژه در گیت‌هاب',github:'لینک گیت‌هاب',connect:'اتصال',settings:'تنظیمات',resolver:'مبدل دلخواه',pusherKey:'کلید Pusher',capLimitBtn:'محدودیت تعداد ورودی',userCapBtn:'سقف لینک هر کاربر',dataSaver:'Data Saver',clearSeen:'پاک کردن دیده‌شده‌ها',clearList:'پاک کردن کل لیست',
   notConnected:'وصل نیست',finding:'در حال اتصال …',notFound:'chat id پیدا نشد؛ عدد chatroom id را جای اسم بنویس',
   connected:'وصل شد',disconnected:'قطع شد؛ اتصال دوباره …',gatewayClosed:'کیک دروازه‌ی چت را بست (خطای 4001)؛ کلید Pusher را در تنظیمات بررسی کن',
   waitTitle:'منتظر لینک اینستاگرام',waitSub:'لینک‌ها به ترتیب ارسال اینجا پخش می‌شوند.',
@@ -519,7 +526,7 @@ const STR={
   cacheCleared:'لیست و کش صفحه کامل پاک شد',
   unseenOf:(a,b)=>`${a} ندیده از ${b}`,newLink:u=>`لینک تازه از @${u}`},
  en:{dir:'ltr',title:'Instagram Queue | Kick Chat',brand:'Instagram Queue',sub:'Kick chat links, in the order they arrive',
-  chPrefix:'kick.com/',chPh:'Channel name or chatroom ID',loginTitle:'Connect to Kick chat',loginSub:'Enter the channel name or chatroom ID',changeCh:'Change channel',dedication:'Dedicated to the good kids of Iran',repo:'Source on GitHub',github:'GitHub link',connect:'Connect',settings:'Settings',resolver:'Custom resolver',pusherKey:'Pusher key',capLimitBtn:'Intake limit',userCapBtn:'Per-user link limit',clearSeen:'Clear watched',clearList:'Clear entire list',
+  chPrefix:'kick.com/',chPh:'Channel name or chatroom ID',loginTitle:'Connect to Kick chat',loginSub:'Enter the channel name or chatroom ID',changeCh:'Change channel',dedication:'Dedicated to the good kids of Iran',repo:'Source on GitHub',github:'GitHub link',connect:'Connect',settings:'Settings',resolver:'Custom resolver',pusherKey:'Pusher key',capLimitBtn:'Intake limit',userCapBtn:'Per-user link limit',dataSaver:'Data Saver',clearSeen:'Clear watched',clearList:'Clear entire list',
   notConnected:'Not connected',finding:'Connecting …',notFound:'Chat id not found — try the numeric chatroom id instead',
   connected:'Connected',disconnected:'Disconnected; reconnecting …',gatewayClosed:'Kick closed the chat gateway (4001) — check the Pusher key in settings',
   waitTitle:'Waiting for an Instagram link',waitSub:'Links play here in the order they were sent.',
@@ -592,7 +599,7 @@ function scan(text,user,ts){if(locked)return;
   while(Q.length>MAXQ){const j=Q.findIndex((x,i)=>x.seen&&i!==cur);if(j<0)break;removeAt(j)}
   render();toast(t('newLink')(user));
   if(capLimit>0&&addedCount>=capLimit)toast(t('capReached'));
-  if(it.t!=='story')enqueue(it);
+  if(it.t!=='story'&&inDataWindow(Q.indexOf(it)))enqueue(it);
   if(auto&&it.t!=='story'&&idle()){const n=nxt();play(n>=0?n:Q.indexOf(it))}}}
 
 /* ---- direct video resolving: limited concurrency, cancel losers, one auto-retry ---- */
@@ -628,6 +635,8 @@ async function resolve(it){
   const r=await Promise.any(jobs.map(p=>p.catch(e=>{it.tried++;upd(it);throw e})));
   src=r.s;via=r.v;
  }catch{}
+ /* Data Saver can cancel work that just moved outside the five-item window. */
+ if(sig.aborted){if(it.ac===ac)it.ac=null;return}
  ac.abort();
  if(it.ac!==ac||it.dropped)return;
  it.ac=null;
@@ -668,8 +677,26 @@ function open_(g){
  me.onerror=()=>{try{me.close()}catch{}}}
 
 /* ---- queue list ---- */
+function syncDataWindow(){
+ if(!dataSaver){
+  Q.forEach(it=>{if(it.t!=='story'&&it.st==='load'&&!it.queued&&!it.ac)enqueue(it)});
+  return;
+ }
+ const keep=new Set(Q.filter((_,i)=>inDataWindow(i)));
+ for(let i=0;i<Q.length;i++){
+  const it=Q[i];
+  if(keep.has(it)){
+   if(it.t!=='story'&&it.st==='load'&&!it.queued&&!it.ac)enqueue(it);
+   continue;
+  }
+  const r=RQ.indexOf(it);if(r>=0)RQ.splice(r,1);
+  if(it.ac)it.ac.abort();
+  const v=it.el?.querySelector('.th video');if(v){v.pause();v.removeAttribute('src');try{v.load()}catch{}v.remove()}
+  it.tvs=null;
+ }
+}
 const IO=new IntersectionObserver(es=>es.forEach(e=>{e.target._vis=e.isIntersecting;if(e.isIntersecting)thumb(e.target._it)}),{root:$('#list'),rootMargin:'250px'});
-function thumb(it){const d=it&&it.el;if(!d||!d._vis||it.st!=='ok'||it.tvs===it.src)return;it.tvs=it.src;
+function thumb(it){const d=it&&it.el,i=Q.indexOf(it);if(!d||!d._vis||!inDataWindow(i)||it.st!=='ok'||it.tvs===it.src)return;it.tvs=it.src;
  const th=d.querySelector('.th');th.querySelector('video')?.remove();
  const v=document.createElement('video');v.muted=true;v.playsInline=true;v.loop=true;v.preload='metadata';v.src=it.src+'#t=0.1';v.onerror=()=>v.remove();th.prepend(v)}
 function mk(it){const d=document.createElement('div');d.tabIndex=0;d._it=it;
@@ -679,7 +706,9 @@ function mk(it){const d=document.createElement('div');d.tabIndex=0;d._it=it;
  d.addEventListener('pointerleave',()=>{const v=d.querySelector('.th video');if(v){v.pause();try{v.currentTime=.1}catch{}}});
  IO.observe(d);it.el=d;return d}
 function render(){
- paintCaps();
+ paintCaps();syncDataWindow();
+ $('#dataSaverBtn').setAttribute('aria-pressed',String(dataSaver));
+ $('#dataSaverVal').textContent=dataSaver?'ON':'OFF';
  const hw=$('#hw').getAttribute('aria-pressed')==='true',L=$('#list'),loc=LANG==='fa'?'fa-IR':'en-US';let shown=0;
  const base=Q.length?t('unseenOf')(Q.filter(x=>!x.seen).length,Q.length):'',cap=capLimit>0?`${Math.min(addedCount,capLimit)}/${capLimit}`:'';
  $('#cnt').textContent=base&&cap?`${base} · ${cap}`:(base||cap);
@@ -710,7 +739,7 @@ const saveSoon=()=>{clearTimeout(svT);svT=setTimeout(saveQueue,500)};
 function saveQueue(){lsSet('queue',JSON.stringify(Q.map(it=>({t:it.t,c:it.c,u:it.u,share:it.share?1:0,user:it.user,ts:it.ts.toISOString(),seen:!!it.seen}))))}
 function loadQueue(){try{const raw=lsGet('queue');if(!raw)return;JSON.parse(raw).slice(-MAXQ).forEach(o=>{
  const it={t:o.t,c:o.c,u:o.u,share:o.share?1:0,user:o.user,ts:new Date(o.ts),seen:!!o.seen,st:o.t==='story'?'link':'load',fresh:0,bad:[],tried:0,total:0,retried:0,noEmb:0,via:'direct'};
- Q.push(it);seen.add(it.t+':'+it.c);if(!it.seen&&it.t!=='story')enqueue(it)})}catch{}}
+ Q.push(it);seen.add(it.t+':'+it.c)})}catch{}syncDataWindow()}
 function head(it){
  $('#nn').textContent='@'+it.user;$('#av').textContent=(it.user[0]||'?').toUpperCase();
  $('#ns').textContent=`${TN()[it.t]||t('post')} · ${it.ts.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}`;
@@ -728,7 +757,7 @@ function swapFx(){const f=$('#frame');f.classList.remove('swap');void f.offsetWi
 function play(i,soft){
  clearTimeout(embT);embT=null;
  if(i<0||i>=Q.length)return;const it=Q[i],scr=$('#scr');
- if(!soft||i!==cur){const ch=i!==cur;cur=i;render();if(ch)swapFx()}
+ if(!soft||i!==cur){const ch=i!==cur;cur=i;syncDataWindow();render();if(ch)swapFx()}
  head(it);$('#frame').classList.remove('hasemb');
  if(it.t==='story'){V=null;scr.innerHTML=msg(t('storyTitle'),t('storySub'));return}
  if(it.st==='load'){V=null;const r=RQ.indexOf(it);if(r>0){RQ.splice(r,1);RQ.unshift(it)}else if(r<0&&!it.queued&&!it.ac)enqueue(it,true);
@@ -781,6 +810,7 @@ $('#capBtn').onclick=()=>{const v=prompt(t('capLimitPrompt'),capLimit>0?String(c
  const n=parseInt(v.trim(),10);capLimit=(Number.isFinite(n)&&n>0)?n:0;lsSet('cap_limit',String(capLimit));
  if(capLimit>0&&addedCount>=capLimit)toast(t('capReached'));else if(capLimit>0)toast(t('capSet')(capLimit));else toast(t('capCleared'));
  render()};
+$('#dataSaverBtn').onclick=()=>{dataSaver=!dataSaver;lsSet('data_saver',dataSaver?'1':'0');syncDataWindow();render();toast(dataSaver?'Data Saver ON · current + 4 next':'Data Saver OFF')};
 $('#userCapBtn').onclick=()=>{const v=prompt(t('userCapPrompt'),userCap>0?String(userCap):'');closeMenu();if(v===null)return;
  const n=parseInt(v.trim(),10);userCap=(Number.isFinite(n)&&n>0)?n:0;lsSet('cap_peruser',String(userCap));
  toast(userCap>0?t('userCapSet')(userCap):t('userCapCleared'));paintCaps()};
@@ -906,6 +936,7 @@ duskShader($('#dusk'),()=>STK==='finding'?1:Math.min(1,$('#ch').value.trim().len
 
 /* ---- init ---- */
 loadQueue();
+$('#dataSaverBtn').setAttribute('aria-pressed',String(dataSaver));$('#dataSaverVal').textContent=dataSaver?'ON':'OFF';
 applyLang(lsGet('ui_lang')||'fa');
 const q=new URLSearchParams(location.search).get('c'),savedCh=lsGet('kick_ch');
 if(savedCh)$('#ch').value=savedCh;   /* login page opens pre-filled with the last channel */
