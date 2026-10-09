@@ -153,11 +153,13 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 370px;
 .frame.live{box-shadow:var(--shadow-glow-soft);border-color:transparent}
 .frame.live>.glow-ring-beam{opacity:1}
 .frame:fullscreen{border-radius:0;border:0}
-.frame.swap .scr{animation:fade var(--dur-slow) var(--ease-out)}
+.frame.swap .scr{animation:none}
 .scr{position:absolute;inset:0;display:grid;place-items:center}
 .scr video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;cursor:pointer}
 .emb{position:absolute;left:50%;top:50%;width:540px;transform-origin:center}
-.emb iframe{width:100%;height:100%;border:0;background:#fff;display:block;border-radius:var(--radius-control)}
+.emb iframe{width:100%;height:100%;border:0;background:#000;display:block;border-radius:var(--radius-control)}
+.emb iframe.platform-player{opacity:0;transition:opacity var(--dur-fast) var(--ease-out)}
+.emb iframe.platform-player.ready{opacity:1}
 .msg{text-align:center;padding:24px;max-width:460px;color:var(--ink-soft);position:relative;z-index:1}
 .msg p{color:var(--ink);font-family:var(--font-heading);font-size:20px;line-height:28px;font-weight:500;letter-spacing:-.02em;margin-bottom:8px}
 html[lang="fa"] .msg p{letter-spacing:0;font-weight:700}
@@ -815,10 +817,13 @@ function controlAvailability(kind){
 function mountEmbed(it,scr,epoch){
  const yt=it.platform==='youtube';mediaRatio=it.ratio||(yt&&!/shorts\//.test(it.u)?16/9:9/16);
  $('#frame').classList.add('hasemb');controlAvailability(it.platform);
- const url=new URL(it.src);url.searchParams.set('controls','1');
- if(yt){url.searchParams.set('enablejsapi','1');url.searchParams.set('origin',location.origin);url.searchParams.set('controls','0')}
- else{url.searchParams.set('description','0');url.searchParams.set('music_info','0')}
- scr.innerHTML=`<div class="emb"><iframe id="platformPlayer" title="${yt?'YouTube':'TikTok'} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" src="${esc(url.href)}"></iframe></div>`;
+ const url=new URL(it.src);url.searchParams.set('controls','0');
+ if(yt){url.searchParams.set('enablejsapi','1');url.searchParams.set('origin',location.origin)}
+ else{
+  /* The app dock owns playback; hide TikTok native UI so pause keeps only the video frame visible. */
+  for(const [k,v] of Object.entries({description:'0',music_info:'0',play_button:'0',progress_bar:'0',volume_control:'0',fullscreen_button:'0',timestamp:'0',closed_caption:'0',native_context_menu:'0',rel:'0'}))url.searchParams.set(k,v)
+ }
+ scr.innerHTML=`<div class="emb"><iframe class="platform-player" id="platformPlayer" title="${yt?'YouTube':'TikTok'} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" src="${esc(url.href)}"></iframe></div>`;
  E=scr.querySelector('iframe');fitEmb();
  // oEmbed supplies the published display dimensions; Shorts default to portrait until metadata arrives.
  const meta=yt?`https://www.youtube.com/oembed?url=${encodeURIComponent(it.u)}&format=json`:`https://www.tiktok.com/oembed?url=${encodeURIComponent(it.u)}`;
@@ -826,14 +831,14 @@ function mountEmbed(it,scr,epoch){
  if(yt)loadYouTubeAPI().then(YT=>{if(epoch!==playerEpoch)return;ytPlayer=new YT.Player(E,{events:{onReady:e=>{
   if(epoch!==playerEpoch)return;const p=e.target;
   V={get paused(){return p.getPlayerState()!==1},get ended(){return p.getPlayerState()===0},get currentTime(){return p.getCurrentTime()||0},set currentTime(v){p.seekTo(Math.max(0,v),true)},get duration(){return p.getDuration()||0},get buffered(){return{length:0}},play(){p.playVideo();return Promise.resolve()},pause(){p.pauseVideo()},set volume(v){p.setVolume(v*100)},set muted(v){v?p.mute():p.unMute()},set playbackRate(v){p.setPlaybackRate(v)},set loop(v){}};
-  setEmbedVolume();V.playbackRate=rate;V.play();
+  E?.classList.add('ready');setEmbedVolume();V.playbackRate=rate;V.play();
  },onStateChange:e=>{if(epoch===playerEpoch&&e.data===0)playbackEnded(it)},onError:()=>{if(epoch===playerEpoch)toast(LANG==='fa'?'این ویدیو در پلیر یوتیوب قابل پخش نیست؛ لینک بالای پلیر را باز کن':'This video cannot be embedded. Open the source link.')}}})}).catch(()=>{if(epoch===playerEpoch)toast('YouTube player API failed to load')});
  else{
   const frame=E,state={time:0,duration:0,paused:true,ended:false};
   const send=(type,value)=>frame.contentWindow.postMessage({'x-tiktok-player':true,type,value},'https://www.tiktok.com');
   V={get paused(){return state.paused},get ended(){return state.ended},get currentTime(){return state.time},set currentTime(v){send('seekTo',Math.max(0,v))},get duration(){return state.duration},get buffered(){return{length:0}},play(){send('play');return Promise.resolve()},pause(){send('pause')},set muted(v){send(v?'mute':'unMute')},set volume(v){},set loop(v){}};
   const receive=e=>{if(epoch!==playerEpoch){removeEventListener('message',receive);return}if(e.source!==frame.contentWindow||e.origin!=='https://www.tiktok.com')return;const d=e.data;if(!d?.['x-tiktok-player'])return;
-   if(d.type==='onPlayerReady'){setEmbedVolume();V.play()}
+   if(d.type==='onPlayerReady'){frame.classList.add('ready');setEmbedVolume();V.play()}
    if(d.type==='onCurrentTime'){state.time=Number(d.value?.currentTime)||0;state.duration=Number(d.value?.duration)||0}
    if(d.type==='onStateChange'){state.paused=d.value!==1;state.ended=d.value===0;if(state.ended)playbackEnded(it)}
    if(d.type==='onVolumeChange'){$('#vol').value=Number(d.value)}
