@@ -415,6 +415,9 @@ body.locked .play-cult{display:none}
 .qh .grp{gap:4px}.qh .chip{padding:0 8px;gap:5px}
 .chip .i2{display:none}.chip[aria-pressed="true"] .i1{display:none}.chip[aria-pressed="true"] .i2{display:block}
 #frame:fullscreen #fs .i1{display:none}#frame:fullscreen #fs .i2{display:block}
+#vol{width:90px;accent-color:var(--brand)}
+button:disabled,input:disabled{opacity:.4;cursor:not-allowed}
+#qualWrap[hidden],#aspectWrap[hidden]{display:none}
 </style>
 </head>
 <body class="locked">
@@ -462,11 +465,12 @@ body.locked .play-cult{display:none}
   <div class="frame" id="frame"><span class="glow-ring-beam" aria-hidden="true"></span><div class="scr" id="scr"></div>
   <div class="now">
    <div class="who"><div class="av" id="av"></div><div style="min-width:0"><b id="nn">—</b><small id="ns"></small></div></div>
-   <div class="nr"><span class="posb figure" id="pos"></span><button class="ib" id="rt" data-i18n-title="retry" hidden><svg class="st" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button><a id="open" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></svg><span data-i18n="openInsta"></span></a></div>
+   <div class="nr"><span class="posb figure" id="pos"></span><button class="ib" id="rt" data-i18n-title="retry" hidden><svg class="st" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button><a id="open" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></svg><span id="openLabel"></span></a></div>
   </div>
   <div class="dock">
    <div class="tl"><span id="tc" class="figure">0:00</span><div class="bar"><div class="bf" id="bf"></div><input type="range" id="sk" min="0" max="1000" value="0" step="1" aria-label="timeline"><span class="tip glass-popup figure" id="tip">0:00</span></div><span id="td" class="figure">0:00</span></div>
    <div class="row">
+    <label class="chip" id="aspectWrap"><select id="aspect" aria-label="Video aspect ratio"><option value="auto">Auto</option><option value="1.7777777778">16:9 ↔</option><option value="0.5625">9:16 ↕</option><option value="1">1:1</option></select></label>
     <div class="grp ctl">
      <button class="ib" id="pv" data-i18n-title="prevTitle"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6L18 18V6z"/></svg></button>
      <button class="ib" id="b5" data-i18n-title="back5"><svg class="st" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><text x="12" y="15.4" text-anchor="middle">5</text></svg></button>
@@ -615,7 +619,7 @@ function parse(u){u=u.replace(/[.,!?)\]]+$/,'');if(!/^https?:\/\//i.test(u))u='h
  return null}
 const nxt=()=>{for(let i=cur+1;i<Q.length;i++)if(!Q[i].seen&&Q[i].t!=='story')return i;return -1};
 /* is the player free to take a new item? */
-function idle(){if(cur<0)return true;const c=Q[cur];if(!c)return true;if(c.emb||c.st==='embed')return !embT&&!loop;if(V)return V.ended;return c.t==='story'||c.st==='fail'||!!c.seen}
+function idle(){if(cur<0)return true;const c=Q[cur];if(!c)return true;if(V)return V.ended&&!loop;return false}
 function scan(text,user,ts){if(locked)return;
  for(const raw of text.match(RX)||[]){
   if(capLimit>0&&addedCount>=capLimit)break;
@@ -782,7 +786,7 @@ function head(it){
  $('#nn').textContent='@'+it.user;$('#av').textContent=(it.user[0]||'?').toUpperCase();
  $('#ns').textContent=`${TN()[it.t]||t('post')} · ${it.ts.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}`;
  $('#rt').hidden=it.st!=='fail';
- const o=$('#open');o.hidden=false;o.href=it.u}
+ const o=$('#open');o.hidden=false;o.href=it.u;const name={instagram:LANG==='fa'?'اینستاگرام':'Instagram',youtube:LANG==='fa'?'یوتیوب':'YouTube',tiktok:LANG==='fa'?'تیک‌تاک':'TikTok'}[it.platform||'instagram'];$('#openLabel').textContent=(LANG==='fa'?'باز کردن در ':'Open in ')+name;o.querySelector('svg').innerHTML='<path d="M14 3h7v7M21 3 10 14M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/>'}
 
 /* ---- player ---- */
 let uiT=0;
@@ -792,21 +796,64 @@ function wake(ms=3000){const f=$('#frame');clearTimeout(uiT);if(ms<=0){f.classLi
  f.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'||e.pointerType==='pen')wake(0)});
  addEventListener('keydown',()=>wake(),{passive:true})}
 function swapFx(){const f=$('#frame');f.classList.remove('swap');void f.offsetWidth;f.classList.add('swap')}
-function setEmbedVolume(){if(!E)return;const n=Math.round((muted?0:volume)*100);try{E.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[n]}),'*')}catch{}}
-function reloadEmbed(){if(Q[cur]?.platform==='youtube')play(cur,1)}
+let ytAPI=null,ytPlayer=null,playerEpoch=0,mediaRatio=9/16,embedCleanup=()=>{};
+function loadYouTubeAPI(){
+ if(window.YT?.Player)return Promise.resolve(window.YT);
+ if(ytAPI)return ytAPI;
+ ytAPI=new Promise((resolve,reject)=>{const old=window.onYouTubeIframeAPIReady;window.onYouTubeIframeAPIReady=()=>{old?.();resolve(window.YT)};const el=document.createElement('script');el.src='https://www.youtube.com/iframe_api';el.onerror=()=>{ytAPI=null;reject(Error('YouTube API unavailable'))};document.head.append(el)});return ytAPI;
+}
+function setEmbedVolume(){if(V){V.volume=volume;V.muted=muted}}
+function playbackEnded(it){if(Q[cur]!==it)return;if(loop){if(V){V.currentTime=0;V.play()}return}it.seen=true;render();const n=nxt();if(auto&&n>=0)play(n)}
+function controlAvailability(kind){
+ const native=kind==='direct',yt=kind==='youtube',tt=kind==='tiktok';
+ for(const id of ['#pp','#b5','#f5','#sk','#mu'])$(id).disabled=!(native||yt||tt);
+ $('#vol').disabled=!(native||yt);$('#sp').disabled=!(native||yt);$('#qualWrap').hidden=true;$('#aspectWrap').hidden=native;$('#aspect').value=Q[cur]?.displayRatio?String(Q[cur].displayRatio):'auto';
+ $('#vol').title=tt?(LANG==='fa'?'صدا را از کنترل خود تیک‌تاک تنظیم کن':'Adjust volume in the TikTok player'):'';
+ let hint=$('#playerHint');if(!hint){hint=document.createElement('small');hint.id='playerHint';$('.dock').append(hint)}
+ hint.textContent=tt?(LANG==='fa'?'تنظیم میزان صدا: از کنترل خود تیک‌تاک استفاده کن.':'Adjust volume using the TikTok player controls.'):(kind==='instagram'?(LANG==='fa'?'پلیر جایگزین اینستاگرام: کنترل پخش از داخل خود ویدیو.':'Instagram fallback: use the controls inside the video.'):'');
+}
+function mountEmbed(it,scr,epoch){
+ const yt=it.platform==='youtube';mediaRatio=it.ratio||(yt&&!/shorts\//.test(it.u)?16/9:9/16);
+ $('#frame').classList.add('hasemb');controlAvailability(it.platform);
+ const url=new URL(it.src);url.searchParams.set('controls','1');
+ if(yt){url.searchParams.set('enablejsapi','1');url.searchParams.set('origin',location.origin);url.searchParams.set('controls','0')}
+ else{url.searchParams.set('description','0');url.searchParams.set('music_info','0')}
+ scr.innerHTML=`<div class="emb"><iframe id="platformPlayer" title="${yt?'YouTube':'TikTok'} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" src="${esc(url.href)}"></iframe></div>`;
+ E=scr.querySelector('iframe');fitEmb();
+ // oEmbed supplies the published display dimensions; Shorts default to portrait until metadata arrives.
+ const meta=yt?`https://www.youtube.com/oembed?url=${encodeURIComponent(it.u)}&format=json`:`https://www.tiktok.com/oembed?url=${encodeURIComponent(it.u)}`;
+ fetch(meta).then(r=>r.json()).then(d=>{if(epoch!==playerEpoch)return;const w=Number(d.width),h=Number(d.height);if(w>0&&h>0&&!/shorts\//.test(it.u)){it.ratio=w/h;mediaRatio=it.ratio;fitEmb()}}).catch(()=>{});
+ if(yt)loadYouTubeAPI().then(YT=>{if(epoch!==playerEpoch)return;ytPlayer=new YT.Player(E,{events:{onReady:e=>{
+  if(epoch!==playerEpoch)return;const p=e.target;
+  V={get paused(){return p.getPlayerState()!==1},get ended(){return p.getPlayerState()===0},get currentTime(){return p.getCurrentTime()||0},set currentTime(v){p.seekTo(Math.max(0,v),true)},get duration(){return p.getDuration()||0},get buffered(){return{length:0}},play(){p.playVideo();return Promise.resolve()},pause(){p.pauseVideo()},set volume(v){p.setVolume(v*100)},set muted(v){v?p.mute():p.unMute()},set playbackRate(v){p.setPlaybackRate(v)},set loop(v){}};
+  setEmbedVolume();V.playbackRate=rate;V.play();
+ },onStateChange:e=>{if(epoch===playerEpoch&&e.data===0)playbackEnded(it)},onError:()=>{if(epoch===playerEpoch)toast(LANG==='fa'?'این ویدیو در پلیر یوتیوب قابل پخش نیست؛ لینک بالای پلیر را باز کن':'This video cannot be embedded. Open the source link.')}}})}).catch(()=>{if(epoch===playerEpoch)toast('YouTube player API failed to load')});
+ else{
+  const frame=E,state={time:0,duration:0,paused:true,ended:false};
+  const send=(type,value)=>frame.contentWindow.postMessage({'x-tiktok-player':true,type,value},'https://www.tiktok.com');
+  V={get paused(){return state.paused},get ended(){return state.ended},get currentTime(){return state.time},set currentTime(v){send('seekTo',Math.max(0,v))},get duration(){return state.duration},get buffered(){return{length:0}},play(){send('play');return Promise.resolve()},pause(){send('pause')},set muted(v){send(v?'mute':'unMute')},set volume(v){},set loop(v){}};
+  const receive=e=>{if(epoch!==playerEpoch){removeEventListener('message',receive);return}if(e.source!==frame.contentWindow||e.origin!=='https://www.tiktok.com')return;const d=e.data;if(!d?.['x-tiktok-player'])return;
+   if(d.type==='onPlayerReady'){setEmbedVolume();V.play()}
+   if(d.type==='onCurrentTime'){state.time=Number(d.value?.currentTime)||0;state.duration=Number(d.value?.duration)||0}
+   if(d.type==='onStateChange'){state.paused=d.value!==1;state.ended=d.value===0;if(state.ended)playbackEnded(it)}
+   if(d.type==='onVolumeChange'){$('#vol').value=Number(d.value)}
+   if(d.type==='onMute'){muted=!!d.value;$('#mu').setAttribute('aria-pressed',String(muted))}
+  };addEventListener('message',receive);embedCleanup=()=>removeEventListener('message',receive);
+ }
+}
 function play(i,soft){
  clearTimeout(embT);embT=null;
- if(i<0||i>=Q.length)return;const it=Q[i],scr=$('#scr');
+ if(i<0||i>=Q.length)return;const it=Q[i],scr=$('#scr');const epoch=++playerEpoch;embedCleanup();embedCleanup=()=>{};ytPlayer?.destroy();ytPlayer=null;E=null;V=null;controlAvailability(it.st==='ok'&&!it.emb?'direct':it.platform);
  if(!soft||i!==cur){const ch=i!==cur;cur=i;syncDataWindow();render();if(ch)swapFx()}
  head(it);$('#frame').classList.remove('hasemb');
  if(it.t==='story'){V=null;scr.innerHTML=msg(t('storyTitle'),t('storySub'));return}
  if(it.st==='load'){V=null;const r=RQ.indexOf(it);if(r>0){RQ.splice(r,1);RQ.unshift(it)}else if(r<0&&!it.queued&&!it.ac)enqueue(it,true);
   scr.innerHTML=`<div class="msg"><i class="sp"></i><p>${t('preparing')}</p><small id="prog">${prog(it)}</small></div>`;return}
- if(it.st==='embed'){V=null;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe title="${esc(it.platform==='youtube'?'YouTube':'TikTok')} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" src="${esc(it.src)}"></iframe></div>`;fitEmb();setEmbedVolume();embT=setTimeout(()=>{if(Q[cur]===it&&!loop){it.seen=true;render();const n=nxt();if(auto&&n>=0)play(n)}},60000);return}
+ if(it.st==='embed'){mountEmbed(it,scr,epoch);return}
  /* direct source failed once → fall back to Instagram's own player instead of a dead end */
  if(it.st==='fail'&&!it.emb){it.emb=1;toast(t('showEmbed'))}
- if(it.emb){clearTimeout(embT);embT=null;V=null;eh=780;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe allowfullscreen allow="autoplay;fullscreen" src="https://www.instagram.com/${esc(it.t)}/${esc(it.c)}/embed"></iframe></div>`;fitEmb();
-  embT=setTimeout(()=>{if(Q[cur]===it&&!loop){clearTimeout(embT);embT=null;const n=nxt();play(n>=0?n:cur+1)}},60000);return}
+ if(it.emb){controlAvailability('instagram');mediaRatio=540/780;clearTimeout(embT);embT=null;V=null;eh=780;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe allowfullscreen allow="autoplay;fullscreen" src="https://www.instagram.com/${esc(it.t)}/${esc(it.c)}/embed"></iframe></div>`;fitEmb();
+  return}
  if(it.st==='ok'){if(soft&&V&&V.dataset.k===it.c)return;
   scr.innerHTML=`<video playsinline data-k="${esc(it.c)}" src="${esc(it.src)}"></video>`;const vid=scr.firstChild;V=vid;
   let stall=0;
@@ -817,14 +864,16 @@ function play(i,soft){
   /* watchdog: source accepted but never actually starts → treat as broken and re-resolve */
   stall=setTimeout(()=>{if(V===vid&&!vid.paused&&vid.currentTime<.3)recover()},10000);
   vid.addEventListener('playing',()=>clearTimeout(stall),{once:true});
-  vid.muted=muted;vid.loop=loop;vid.playbackRate=rate;vid.onclick=()=>$('#pp').click();
+  vid.volume=volume;vid.muted=muted;vid.loop=loop;vid.playbackRate=rate;vid.onclick=()=>$('#pp').click();
   vid.play().catch(()=>{if(V!==vid)return;vid.muted=true;vid.play().catch(()=>{})});return}
  V=null;scr.innerHTML=msg(t('failTitle'),t('failSub'),`<div class="acts"><button data-a="rt">${IC.rt}${t('retry')}</button><button data-a="emb">${IC.ig}${t('showEmbed')}</button></div>`)}
 function fitEmb(){const e=$('.emb'),s=$('#scr');if(!e)return;
- const k=Math.min(2,s.clientWidth/540,s.clientHeight/eh);e.style.height=eh+'px';e.style.transform=`translate(-50%,-50%) scale(${k})`}
+ const ratio=Q[cur]?.displayRatio||(Q[cur]?.emb?540/eh:mediaRatio);const w=Math.min(s.clientWidth,s.clientHeight*ratio);
+ e.style.width=w+'px';e.style.height=w/ratio+'px';e.style.transform='translate(-50%,-50%)';}
 addEventListener('message',e=>{if(!/instagram\.com$/.test(e.origin))return;
  try{const d=typeof e.data==='string'?JSON.parse(e.data):e.data;const h=d?.details?.height;if(d?.type==='MEASURE'&&h>100){eh=h;fitEmb()}}catch{}});
 addEventListener('resize',fitEmb);
+$('#aspect').onchange=e=>{if(!Q[cur])return;Q[cur].displayRatio=e.target.value==='auto'?null:Number(e.target.value);fitEmb()};
 $('#scr').onclick=e=>{const a=e.target.closest('[data-a]')?.dataset.a,it=Q[cur];if(!it)return;if(a==='rt')redo(it);if(a==='emb'){it.emb=1;play(cur,1)}};
 $('#rt').onclick=()=>{const it=Q[cur];if(it&&it.st==='fail')redo(it)};
 $('#list').onclick=e=>{const d=e.target.closest('.it');if(!d)return;if(e.target.closest('.x')){removeAt(+d.dataset.i,true);return}play(+d.dataset.i)};
@@ -834,14 +883,14 @@ $('#pv').onclick=()=>play(cur-1);$('#nx').onclick=next;
 $('#pp').onclick=()=>{if(V)V.paused?V.play().catch(()=>{}):V.pause()};
 $('#b5').onclick=()=>{if(V)V.currentTime-=5};$('#f5').onclick=()=>{if(V)V.currentTime+=5};
 const tg=(id,fn)=>$(id).onclick=e=>{const b=e.currentTarget,p=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',p);fn(p)};
-tg('#au',p=>auto=p);tg('#lp',p=>{loop=p;if(V)V.loop=p});tg('#mu',p=>{muted=p;if(V)V.muted=p});$('#vol').value=String(Math.round(volume*100));$('#vol').oninput=e=>{volume=+e.target.value/100;muted=volume===0;if(V){V.volume=volume;V.muted=muted}setEmbedVolume();};$('#qual').onchange=e=>{quality=e.target.value;reloadEmbed()};tg('#hw',render);tg('#freeze',p=>locked=p);
+tg('#au',p=>auto=p);tg('#lp',p=>{loop=p;if(V)V.loop=p});tg('#mu',p=>{muted=p;if(V)V.muted=p});$('#vol').value=String(Math.round(volume*100));$('#vol').oninput=e=>{volume=+e.target.value/100;muted=volume===0;if(V){V.volume=volume;V.muted=muted}setEmbedVolume();};$('#qual').onchange=()=>{};tg('#hw',render);tg('#freeze',p=>locked=p);
 $('#sp').onclick=e=>{const r=[1,1.25,1.5,2];rate=r[(r.indexOf(rate)+1)%4];$('#spv').textContent=rate+'×';if(V)V.playbackRate=rate};
 const fs=()=>document.fullscreenElement?document.exitFullscreen():$('#frame').requestFullscreen?.();
 $('#fs').onclick=fs;
 const closeMenu=()=>$('.menu').removeAttribute('open');
 document.addEventListener('click',e=>{const m=$('.menu');if(m.open&&!m.contains(e.target))closeMenu()});
 $('#clr').onclick=()=>{Q.forEach(it=>{it.dropped=1;it.ac&&it.ac.abort();if(it.el)IO.unobserve(it.el)});
- Q.length=0;RQ.length=0;seen.clear();cur=-1;V=null;$('#list').innerHTML='';
+ playerEpoch++;ytPlayer?.destroy();ytPlayer=null;E=null;clearTimeout(embT);Q.length=0;RQ.length=0;seen.clear();cur=-1;V=null;$('#list').innerHTML='';
  addedCount=0;lsSet('cap_added','0');   /* clearing the queue also resets the intake counter */
  lsDel('queue');   /* wipe every trace of the saved page state */
  resetHead();idleScreen();render();closeMenu();toast(t('cacheCleared'))};
@@ -876,14 +925,14 @@ bar.addEventListener('pointerleave',()=>tip.classList.remove('on'));
  if(V){const d=V.duration||0,c=V.currentTime,it=Q[cur];
   if(d&&!drag){const p=Math.round(c/d*1e3)/10;if(p!==lp){lp=p;sk.value=p*10;sk.style.setProperty('--p',p+'%')}}
   put(tc,fmt(c));put(td,fmt(d));
-  if(d&&V.buffered.length){const b=(V.buffered.end(V.buffered.length-1)/d*100).toFixed(1);if(b!==lb){lb=b;bf.style.width=b+'%'}}
+  if(d&&V.buffered?.length){const b=(V.buffered.end(V.buffered.length-1)/d*100).toFixed(1);if(b!==lb){lb=b;bf.style.width=b+'%'}}
   if(it&&!it.seen&&c>=3){it.seen=true;render()}}
  else{put(tc,'0:00');put(td,'0:00');if(lp!==0){lp=0;sk.value=0;sk.style.setProperty('--p','0%')}lb=-1;bf.style.width='0'}
  requestAnimationFrame(tick)})()}
 addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'&&e.target.type!=='range'||e.ctrlKey||e.metaKey||e.altKey)return;const k=e.key.toLowerCase();
  if(k==='n')next();if(k==='p')play(cur-1);if(k==='m')$('#mu').click();if(k==='f')fs();
  if(e.key==='Delete'&&cur>=0){removeAt(cur,true);return}
- if(!V)return;
+ if(!V||e.target.tagName==='SELECT'||e.target.type==='range')return;
  if(e.key===' '){e.preventDefault();$('#pp').click()}
  if(e.key==='ArrowLeft'){e.preventDefault();V.currentTime-=5}if(e.key==='ArrowRight'){e.preventDefault();V.currentTime+=5}});
 
@@ -987,14 +1036,3 @@ if(q){$('#ch').value=q;connect()}
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
