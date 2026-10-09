@@ -149,9 +149,8 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 370px;
 .stage{display:flex;flex-direction:column;min-height:0}
 .frame{flex:1;min-height:240px;position:relative;background:radial-gradient(ellipse at 50% 30%,#15151d,#060609 72%);border:1px solid var(--hairline);border-radius:var(--radius-panel);overflow:hidden;
  transition:box-shadow var(--dur-slow) var(--ease-out),border-color var(--dur-slow) var(--ease-out)}
-.frame>.glow-ring-beam{opacity:0;transition:opacity var(--dur-slow) var(--ease-out)}
-.frame.live{box-shadow:var(--shadow-glow-soft);border-color:transparent}
-.frame.live>.glow-ring-beam{opacity:1}
+.frame>.glow-ring-beam{display:none}
+.frame.live{box-shadow:var(--shadow-glow-soft);border-color:rgb(106 168 236/.22)}
 .frame:fullscreen{border-radius:0;border:0}
 .frame.swap .scr{animation:none}
 .scr{position:absolute;inset:0;display:grid;place-items:center}
@@ -922,10 +921,11 @@ sk.onchange=()=>{drag=false};
 bar.addEventListener('pointermove',e=>{const r=bar.getBoundingClientRect(),x=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));
  tip.style.left=x*100+'%';tip.textContent=V&&V.duration?fmt(x*V.duration):'0:00';tip.classList.add('on')});
 bar.addEventListener('pointerleave',()=>tip.classList.remove('on'));
-{const tc=$('#tc'),td=$('#td'),bf=$('#bf'),pp=$('#pp'),lst=$('#list'),frm=$('#frame'),put=(e,v)=>{if(e.textContent!==v)e.textContent=v};let lp=-1,lb=-1;
+{const tc=$('#tc'),td=$('#td'),bf=$('#bf'),pp=$('#pp'),lst=$('#list'),frm=$('#frame'),put=(e,v)=>{if(e.textContent!==v)e.textContent=v};let lp=-1,lb=-1,lastFrameLive=null;
 (function tick(){
- const pl=!!V&&!V.paused;
- if(pl!==lastP){lastP=pl;pp.innerHTML=pl?IC.pause:IC.play;pp.classList.toggle('playing',pl);lst.classList.toggle('paused',!pl);frm.classList.toggle('live',pl);
+ const pl=!!V&&!V.paused,frameLive=!!V&&!V.ended;
+ if(frameLive!==lastFrameLive){lastFrameLive=frameLive;frm.classList.toggle('live',frameLive)}
+ if(pl!==lastP){lastP=pl;pp.innerHTML=pl?IC.pause:IC.play;pp.classList.toggle('playing',pl);lst.classList.toggle('paused',!pl);
   if(pl&&matchMedia('(hover:hover)').matches&&!frm.matches(':hover'))wake(0)}   /* playing with the mouse away → controls start hidden */
  if(V){const d=V.duration||0,c=V.currentTime,it=Q[cur];
   if(d&&!drag){const p=Math.round(c/d*1e3)/10;if(p!==lp){lp=p;sk.value=p*10;sk.style.setProperty('--p',p+'%')}}
