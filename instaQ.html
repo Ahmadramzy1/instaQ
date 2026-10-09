@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="referrer" content="no-referrer">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#09090f">
 <meta name="description" content="صف پخش لینک‌های اینستاگرام ارسالی در چت کیک — پخش خودکار رییل و پست به ترتیب ارسال">
 <title>صف اینستاگرام | چت کیک</title>
@@ -802,7 +802,7 @@ function play(i,soft){
  if(it.t==='story'){V=null;scr.innerHTML=msg(t('storyTitle'),t('storySub'));return}
  if(it.st==='load'){V=null;const r=RQ.indexOf(it);if(r>0){RQ.splice(r,1);RQ.unshift(it)}else if(r<0&&!it.queued&&!it.ac)enqueue(it,true);
   scr.innerHTML=`<div class="msg"><i class="sp"></i><p>${t('preparing')}</p><small id="prog">${prog(it)}</small></div>`;return}
- if(it.st==='embed'){V=null;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe title="${esc(it.platform==='youtube'?'YouTube':'TikTok')} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen src="${esc(it.src)}"></iframe></div>`;fitEmb();setEmbedVolume();embT=setTimeout(()=>{if(Q[cur]===it&&!loop){it.seen=true;render();const n=nxt();if(auto&&n>=0)play(n)}},60000);return}
+ if(it.st==='embed'){V=null;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe title="${esc(it.platform==='youtube'?'YouTube':'TikTok')} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" src="${esc(it.src)}"></iframe></div>`;fitEmb();setEmbedVolume();embT=setTimeout(()=>{if(Q[cur]===it&&!loop){it.seen=true;render();const n=nxt();if(auto&&n>=0)play(n)}},60000);return}
  /* direct source failed once → fall back to Instagram's own player instead of a dead end */
  if(it.st==='fail'&&!it.emb){it.emb=1;toast(t('showEmbed'))}
  if(it.emb){clearTimeout(embT);embT=null;V=null;eh=780;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe allowfullscreen allow="autoplay;fullscreen" src="https://www.instagram.com/${esc(it.t)}/${esc(it.c)}/embed"></iframe></div>`;fitEmb();
@@ -987,6 +987,9 @@ if(q){$('#ch').value=q;connect()}
 </script>
 </body>
 </html>
+
+
+
 
 
 
