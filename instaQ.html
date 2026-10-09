@@ -506,6 +506,7 @@ const lsSet=(k,v)=>{try{localStorage.setItem(LS_PREFIX+k,v)}catch{}};
 const lsDel=k=>{try{localStorage.removeItem(LS_PREFIX+k)}catch{}};
 const MAXQ=150,MAXR=3,DEF_PUSHER='32cbd69e4b950bf97679';
 let cur=-1,ws=null,retry=0,room=0,live=false,gen=0,rtT=0,auto=true,loop=false,muted=false,rate=1,volume=1,quality='auto',drag=false,V=null,E=null,eh=780,locked=false,running=0,svT=0,lastP=null,toastT=0;
+let igMeasureTimer=0,igMeasureSamples=[];
 let capLimit=parseInt(lsGet('cap_limit')||'0',10)||0,addedCount=parseInt(lsGet('cap_added')||'0',10)||0,userCap=parseInt(lsGet('cap_peruser')||'0',10)||0,embT=null;
 let dataSaver=lsGet('data_saver')==='1';
 const DATA_WINDOW=5;
@@ -856,7 +857,7 @@ function play(i,soft){
  if(it.st==='embed'){mountEmbed(it,scr,epoch);return}
  /* direct source failed once → fall back to Instagram's own player instead of a dead end */
  if(it.st==='fail'&&!it.emb){it.emb=1;toast(t('showEmbed'))}
- if(it.emb){controlAvailability('instagram');mediaRatio=540/780;clearTimeout(embT);embT=null;V=null;eh=780;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe allowfullscreen allow="autoplay;fullscreen" src="https://www.instagram.com/${esc(it.t)}/${esc(it.c)}/embed"></iframe></div>`;fitEmb();
+ if(it.emb){controlAvailability('instagram');mediaRatio=540/780;clearTimeout(embT);embT=null;clearTimeout(igMeasureTimer);igMeasureTimer=0;igMeasureSamples=[];V=null;eh=it.igHeight||780;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe allowfullscreen allow="autoplay;fullscreen" src="https://www.instagram.com/${esc(it.t)}/${esc(it.c)}/embed"></iframe></div>`;fitEmb();
   return}
  if(it.st==='ok'){if(soft&&V&&V.dataset.k===it.c)return;
   scr.innerHTML=`<video playsinline data-k="${esc(it.c)}" src="${esc(it.src)}"></video>`;const vid=scr.firstChild;V=vid;
@@ -875,7 +876,20 @@ function fitEmb(){const e=$('.emb'),s=$('#scr');if(!e)return;
  const ratio=Q[cur]?.displayRatio||(Q[cur]?.emb?540/eh:mediaRatio);const w=Math.min(s.clientWidth,s.clientHeight*ratio);
  e.style.width=w+'px';e.style.height=w/ratio+'px';e.style.transform='translate(-50%,-50%)';}
 addEventListener('message',e=>{if(!/instagram\.com$/.test(e.origin))return;
- try{const d=typeof e.data==='string'?JSON.parse(e.data):e.data;const h=d?.details?.height;if(d?.type==='MEASURE'&&h>100){eh=h;fitEmb()}}catch{}});
+ try{
+  const d=typeof e.data==='string'?JSON.parse(e.data):e.data,h=Number(d?.details?.height),it=Q[cur];
+  if(d?.type!=='MEASURE'||!Number.isFinite(h)||h<=100||!it?.emb)return;
+  /* Instagram can oscillate its measured height after each resize. Sample once, then lock a stable height for this post. */
+  if(it.igHeight)return;
+  igMeasureSamples.push(h);if(igMeasureSamples.length>12)igMeasureSamples.shift();
+  if(igMeasureTimer)return;
+  igMeasureTimer=setTimeout(()=>{
+   igMeasureTimer=0;if(Q[cur]!==it||it.igHeight||!igMeasureSamples.length)return;
+   const a=igMeasureSamples.splice(0).sort((x,y)=>x-y),mid=Math.floor(a.length/2);
+   const stable=a.length%2?a[mid]:(a[mid-1]+a[mid])/2;
+   it.igHeight=Math.round(stable);eh=it.igHeight;fitEmb();
+  },320);
+ }catch{}});
 addEventListener('resize',fitEmb);
 $('#aspect').onchange=e=>{if(!Q[cur])return;Q[cur].displayRatio=e.target.value==='auto'?null:Number(e.target.value);fitEmb()};
 $('#scr').onclick=e=>{const a=e.target.closest('[data-a]')?.dataset.a,it=Q[cur];if(!it)return;if(a==='rt')redo(it);if(a==='emb'){it.emb=1;play(cur,1)}};
