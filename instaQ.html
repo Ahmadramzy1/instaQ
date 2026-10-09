@@ -817,11 +817,11 @@ function controlAvailability(kind){
 function mountEmbed(it,scr,epoch){
  const yt=it.platform==='youtube';mediaRatio=it.ratio||(yt&&!/shorts\//.test(it.u)?16/9:9/16);
  $('#frame').classList.add('hasemb');controlAvailability(it.platform);
- const url=new URL(it.src);url.searchParams.set('controls','0');
- if(yt){url.searchParams.set('enablejsapi','1');url.searchParams.set('origin',location.origin)}
+ const url=new URL(it.src);
+ if(yt){url.searchParams.set('controls','0');url.searchParams.set('enablejsapi','1');url.searchParams.set('origin',location.origin)}
  else{
-  /* The app dock owns playback; hide TikTok native UI so pause keeps only the video frame visible. */
-  for(const [k,v] of Object.entries({description:'0',music_info:'0',play_button:'0',progress_bar:'0',volume_control:'0',fullscreen_button:'0',timestamp:'0',closed_caption:'0',native_context_menu:'0',rel:'0'}))url.searchParams.set(k,v)
+  /* Keep only TikTok's volume control; hide the pause/play overlay and other native chrome. */
+  for(const [k,v] of Object.entries({controls:'1',description:'0',music_info:'0',play_button:'0',progress_bar:'0',volume_control:'1',fullscreen_button:'0',timestamp:'0',closed_caption:'0',native_context_menu:'0',rel:'0'}))url.searchParams.set(k,v)
  }
  scr.innerHTML=`<div class="emb"><iframe class="platform-player" id="platformPlayer" title="${yt?'YouTube':'TikTok'} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" src="${esc(url.href)}"></iframe></div>`;
  E=scr.querySelector('iframe');fitEmb();
