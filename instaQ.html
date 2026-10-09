@@ -840,7 +840,7 @@ function mountEmbed(it,scr,epoch){
   const receive=e=>{if(epoch!==playerEpoch){removeEventListener('message',receive);return}if(e.source!==frame.contentWindow||e.origin!=='https://www.tiktok.com')return;const d=e.data;if(!d?.['x-tiktok-player'])return;
    if(d.type==='onPlayerReady'){frame.classList.add('ready');setEmbedVolume();V.play()}
    if(d.type==='onCurrentTime'){state.time=Number(d.value?.currentTime)||0;state.duration=Number(d.value?.duration)||0}
-   if(d.type==='onStateChange'){state.paused=d.value!==1;state.ended=d.value===0;if(state.ended)playbackEnded(it)}
+   if(d.type==='onStateChange'){const st=Number(d.value);if(st===1){state.paused=false;state.ended=false}else if(st===2){state.paused=true;state.ended=false}else if(st===0){state.paused=true;state.ended=true;playbackEnded(it)}}
    if(d.type==='onVolumeChange'){$('#vol').value=Number(d.value)}
    if(d.type==='onMute'){muted=!!d.value;$('#mu').setAttribute('aria-pressed',String(muted))}
   };addEventListener('message',receive);embedCleanup=()=>removeEventListener('message',receive);
