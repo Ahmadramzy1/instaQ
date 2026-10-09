@@ -124,3 +124,11 @@ test('platform embeds reveal only after player ready and do not use the old swap
 test('TikTok buffering does not masquerade as pause and flash the player state', () => {
   assert.match(app, /if\(st===1\)\{state\.paused=false;state\.ended=false\}else if\(st===2\)\{state\.paused=true;state\.ended=false\}/);
 });
+
+
+test('playback frame stays visually stable across pause and buffering', () => {
+  assert.match(app, /\.frame>\.glow-ring-beam\{display:none\}/);
+  assert.match(app, /frameLive=!!V&&!V\.ended/);
+  assert.match(app, /frm\.classList\.toggle\('live',frameLive\)/);
+  assert.doesNotMatch(app, /frm\.classList\.toggle\('live',pl\)/);
+});
