@@ -317,7 +317,7 @@ html[lang="fa"] .lgcard h1{letter-spacing:0;font-weight:700}
 .source-option{position:relative;cursor:pointer}
 .source-option input{position:absolute;opacity:0;pointer-events:none}
 .source-option span{display:flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--border);border-radius:12px;color:var(--muted);background:var(--glass);font-size:12px;transition:.2s}
-.source-option input:checked+span{color:var(--on-brand);background:var(--grad);border-color:transparent;box-shadow:0 5px 18px -12px var(--brand)}
+.source-option input:checked+span{color:#fff;background:#20b86b;border-color:#20b86b;box-shadow:0 5px 18px -12px rgb(32 184 107/.85)}
 .source-option input:focus-visible+span{outline:2px solid var(--brand);outline-offset:2px}
 .source-dot{width:8px;height:8px;border-radius:50%;background:currentColor}
 .lin .ico{color:var(--muted)}
@@ -474,7 +474,7 @@ body.locked .play-cult{display:none}
      <button class="ib" id="f5" data-i18n-title="fwd5"><svg class="st" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><text x="12" y="15.4" text-anchor="middle">5</text></svg></button>
      <button class="ib" id="nx" data-i18n-title="nextTitle"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
     </div>
-    <div class="grp"><button class="chip" id="sp" data-i18n-title="speedTitle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg><span id="spv">1×</span></button><button class="chip" id="lp" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg><span data-i18n="repeat"></span></button><button class="chip" id="au" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z"/></svg><span data-i18n="autoplay"></span></button><button class="chip" id="mu" aria-pressed="false" title="M"><svg class="i1" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg><svg class="i2" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6"/><path d="m17 9 6 6"/></svg><span data-i18n="mute"></span></button><button class="chip" id="fs" title="F"><svg class="i1" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="i2" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span data-i18n="fullscreen"></span></button></div>
+    <div class="grp"><label class="chip" title="Volume"><span aria-hidden="true">🔊</span><input id="vol" type="range" min="0" max="100" value="100" aria-label="Volume"></label><label class="chip" id="qualWrap" title="YouTube quality"><span>HD</span><select id="qual" aria-label="YouTube quality"><option value="auto">Auto</option><option value="144">144p</option><option value="360">360p</option><option value="480">480p</option><option value="720">720p</option><option value="1080">1080p</option></select></label><button class="chip" id="sp" data-i18n-title="speedTitle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg><span id="spv">1×</span></button><button class="chip" id="lp" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg><span data-i18n="repeat"></span></button><button class="chip" id="au" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z"/></svg><span data-i18n="autoplay"></span></button><button class="chip" id="mu" aria-pressed="false" title="M"><svg class="i1" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg><svg class="i2" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6"/><path d="m17 9 6 6"/></svg><span data-i18n="mute"></span></button><button class="chip" id="fs" title="F"><svg class="i1" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="i2" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span data-i18n="fullscreen"></span></button></div>
    </div>
   </div>
   </div>
@@ -500,7 +500,7 @@ const lsGet=k=>{try{return localStorage.getItem(LS_PREFIX+k)}catch{return null}}
 const lsSet=(k,v)=>{try{localStorage.setItem(LS_PREFIX+k,v)}catch{}};
 const lsDel=k=>{try{localStorage.removeItem(LS_PREFIX+k)}catch{}};
 const MAXQ=150,MAXR=3,DEF_PUSHER='32cbd69e4b950bf97679';
-let cur=-1,ws=null,retry=0,room=0,live=false,gen=0,rtT=0,auto=true,loop=false,muted=false,rate=1,drag=false,V=null,eh=780,locked=false,running=0,svT=0,lastP=null,toastT=0;
+let cur=-1,ws=null,retry=0,room=0,live=false,gen=0,rtT=0,auto=true,loop=false,muted=false,rate=1,volume=1,quality='auto',drag=false,V=null,E=null,eh=780,locked=false,running=0,svT=0,lastP=null,toastT=0;
 let capLimit=parseInt(lsGet('cap_limit')||'0',10)||0,addedCount=parseInt(lsGet('cap_added')||'0',10)||0,userCap=parseInt(lsGet('cap_peruser')||'0',10)||0,embT=null;
 let dataSaver=lsGet('data_saver')==='1';
 const DATA_WINDOW=5;
@@ -535,7 +535,7 @@ const STR={
   retry:'تلاش مجدد',showEmbed:'نمایش با پلیر اینستاگرام',openInsta:'باز کردن در اینستاگرام',
   noLink:'هنوز لینکی نیامده',emptyList:'لیست خالی است',nextNote:'لینک بعدی که بیاید همین‌جا پخش می‌شود.',
   queue:'صف پخش',unseenOnly:'فقط ندیده‌ها',freezeIntake:'توقف افزودن',allSeen:'همه‌ی ویدیوها دیده شده‌اند',noLinkList:'هنوز لینکی نیامده',
-  reel:'ریل',post:'پست',igtv:'IGTV',story:'استوری',
+  reel:'ریل',post:'پست',igtv:'IGTV',story:'استوری',youtube:'یوتیوب',tiktok:'تیک‌تاک',
   resolverPrompt:'آدرس مبدل شخصی (با {t} و {c} برای نوع و کد پست). باید خود ویدیو را برگرداند یا به آن ریدایرکت کند:',
   pusherPrompt:'کلید اپ Pusher کیک (خالی = پیش‌فرض):',
   capLimitPrompt:'حداکثر تعداد لینکی که وارد صف شود (خالی یا صفر = بدون محدودیت):',
@@ -561,7 +561,7 @@ const STR={
   retry:'Retry',showEmbed:'Show with Instagram player',openInsta:'Open in Instagram',
   noLink:'No link yet',emptyList:'List is empty',nextNote:'The next link will play here.',
   queue:'Queue',unseenOnly:'Unseen only',freezeIntake:'Freeze intake',allSeen:'All videos seen',noLinkList:'No links yet',
-  reel:'Reel',post:'Post',igtv:'IGTV',story:'Story',
+  reel:'Reel',post:'Post',igtv:'IGTV',story:'Story',youtube:'YouTube',tiktok:'TikTok',
   resolverPrompt:'Personal resolver URL (use {t} and {c} for type and post code). Must return or redirect to the actual video:',
   pusherPrompt:'Kick Pusher app key (empty = default):',
   capLimitPrompt:'Max number of links allowed into the queue (empty or 0 = unlimited):',
@@ -582,7 +582,7 @@ const sourceChecks={instagram:()=>$('#srcInstagram').checked,youtube:()=>$('#src
 function saveSources(){lsSet('sources',JSON.stringify(sources))}
 function loadSources(){try{Object.assign(sources,JSON.parse(lsGet('sources')||'{}'))}catch{};for(const k of Object.keys(sourceChecks))$('#src'+k[0].toUpperCase()+k.slice(1)).checked=!!sources[k]}
 const t=k=>STR[LANG][k];
-const TN=()=>({reel:t('reel'),p:t('post'),tv:t('igtv'),story:t('story')});
+const TN=()=>({reel:t('reel'),p:t('post'),tv:t('igtv'),story:t('story'),youtube:t('youtube'),tiktok:t('tiktok')});
 const msg=(ti,s='',x='',icon='')=>`<div class="msg">${icon}<p>${ti}</p>${s}${x}</div>`;
 function idleScreen(){$('#frame').classList.remove('hasemb');if(cur<0)$('#scr').innerHTML=Q.length?msg(t('emptyList'),t('nextNote'),`<small>${t('shortcuts')}</small>`,EMPTY_I):msg(t('waitTitle'),t('waitSub'),`<small>${t('shortcuts')}</small>`,SEAL_I)}
 function resetHead(){$('#nn').textContent='—';$('#av').textContent='';$('#ns').textContent=t('noLink');$('#open').hidden=true;$('#rt').hidden=true}
@@ -615,7 +615,7 @@ function parse(u){u=u.replace(/[.,!?)\]]+$/,'');if(!/^https?:\/\//i.test(u))u='h
  return null}
 const nxt=()=>{for(let i=cur+1;i<Q.length;i++)if(!Q[i].seen&&Q[i].t!=='story')return i;return -1};
 /* is the player free to take a new item? */
-function idle(){if(cur<0)return true;const c=Q[cur];if(!c)return true;if(c.emb)return !embT&&!loop;if(V)return V.ended;return c.t==='story'||c.st==='fail'||!!c.seen}
+function idle(){if(cur<0)return true;const c=Q[cur];if(!c)return true;if(c.emb||c.st==='embed')return !embT&&!loop;if(V)return V.ended;return c.t==='story'||c.st==='fail'||!!c.seen}
 function scan(text,user,ts){if(locked)return;
  for(const raw of text.match(RX)||[]){
   if(capLimit>0&&addedCount>=capLimit)break;
@@ -792,6 +792,8 @@ function wake(ms=3000){const f=$('#frame');clearTimeout(uiT);if(ms<=0){f.classLi
  f.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'||e.pointerType==='pen')wake(0)});
  addEventListener('keydown',()=>wake(),{passive:true})}
 function swapFx(){const f=$('#frame');f.classList.remove('swap');void f.offsetWidth;f.classList.add('swap')}
+function setEmbedVolume(){if(!E)return;const n=Math.round((muted?0:volume)*100);try{E.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[n]}),'*')}catch{}}
+function reloadEmbed(){if(Q[cur]?.platform==='youtube')play(cur,1)}
 function play(i,soft){
  clearTimeout(embT);embT=null;
  if(i<0||i>=Q.length)return;const it=Q[i],scr=$('#scr');
@@ -800,7 +802,7 @@ function play(i,soft){
  if(it.t==='story'){V=null;scr.innerHTML=msg(t('storyTitle'),t('storySub'));return}
  if(it.st==='load'){V=null;const r=RQ.indexOf(it);if(r>0){RQ.splice(r,1);RQ.unshift(it)}else if(r<0&&!it.queued&&!it.ac)enqueue(it,true);
   scr.innerHTML=`<div class="msg"><i class="sp"></i><p>${t('preparing')}</p><small id="prog">${prog(it)}</small></div>`;return}
- if(it.st==='embed'){V=null;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe title="${esc(it.platform==='youtube'?'YouTube':'TikTok')} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen src="${esc(it.src)}"></iframe></div>`;fitEmb();return}
+ if(it.st==='embed'){V=null;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe title="${esc(it.platform==='youtube'?'YouTube':'TikTok')} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen src="${esc(it.src)}"></iframe></div>`;fitEmb();setEmbedVolume();embT=setTimeout(()=>{if(Q[cur]===it&&!loop){it.seen=true;render();const n=nxt();if(auto&&n>=0)play(n)}},60000);return}
  /* direct source failed once → fall back to Instagram's own player instead of a dead end */
  if(it.st==='fail'&&!it.emb){it.emb=1;toast(t('showEmbed'))}
  if(it.emb){clearTimeout(embT);embT=null;V=null;eh=780;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe allowfullscreen allow="autoplay;fullscreen" src="https://www.instagram.com/${esc(it.t)}/${esc(it.c)}/embed"></iframe></div>`;fitEmb();
@@ -832,7 +834,7 @@ $('#pv').onclick=()=>play(cur-1);$('#nx').onclick=next;
 $('#pp').onclick=()=>{if(V)V.paused?V.play().catch(()=>{}):V.pause()};
 $('#b5').onclick=()=>{if(V)V.currentTime-=5};$('#f5').onclick=()=>{if(V)V.currentTime+=5};
 const tg=(id,fn)=>$(id).onclick=e=>{const b=e.currentTarget,p=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',p);fn(p)};
-tg('#au',p=>auto=p);tg('#lp',p=>{loop=p;if(V)V.loop=p});tg('#mu',p=>{muted=p;if(V)V.muted=p});tg('#hw',render);tg('#freeze',p=>locked=p);
+tg('#au',p=>auto=p);tg('#lp',p=>{loop=p;if(V)V.loop=p});tg('#mu',p=>{muted=p;if(V)V.muted=p});$('#vol').value=String(Math.round(volume*100));$('#vol').oninput=e=>{volume=+e.target.value/100;muted=volume===0;if(V){V.volume=volume;V.muted=muted}setEmbedVolume();};$('#qual').onchange=e=>{quality=e.target.value;reloadEmbed()};tg('#hw',render);tg('#freeze',p=>locked=p);
 $('#sp').onclick=e=>{const r=[1,1.25,1.5,2];rate=r[(r.indexOf(rate)+1)%4];$('#spv').textContent=rate+'×';if(V)V.playbackRate=rate};
 const fs=()=>document.fullscreenElement?document.exitFullscreen():$('#frame').requestFullscreen?.();
 $('#fs').onclick=fs;
@@ -985,3 +987,10 @@ if(q){$('#ch').value=q;connect()}
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
