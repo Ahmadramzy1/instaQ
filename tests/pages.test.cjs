@@ -104,3 +104,23 @@ test('login hides the playback BW CULT while keeping the primary login wordmark'
   assert.match(app, /<div class="cultbar">/);
   assert.match(app, /<div class="play-cult"/);
 });
+
+
+test('TikTok pause overlay stays hidden while preserving volume control', () => {
+  assert.match(app, /play_button:'0'/);
+  assert.match(app, /progress_bar:'0'/);
+  assert.match(app, /volume_control:'1'/);
+  assert.match(app, /fullscreen_button:'0'/);
+});
+
+test('platform embeds reveal only after player ready and do not use the old swap fade', () => {
+  assert.match(app, /iframe\.platform-player\{opacity:0/);
+  assert.match(app, /iframe\.platform-player\.ready\{opacity:1/);
+  assert.match(app, /background:#000/);
+  assert.match(app, /\.frame\.swap \.scr\{animation:none\}/);
+  assert.match(app, /frame\.classList\.add\('ready'\)/);
+});
+
+test('TikTok buffering does not masquerade as pause and flash the player state', () => {
+  assert.match(app, /if\(st===1\)\{state\.paused=false;state\.ended=false\}else if\(st===2\)\{state\.paused=true;state\.ended=false\}/);
+});
