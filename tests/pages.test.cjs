@@ -132,3 +132,12 @@ test('playback frame stays visually stable across pause and buffering', () => {
   assert.match(app, /frm\.classList\.toggle\('live',frameLive\)/);
   assert.doesNotMatch(app, /frm\.classList\.toggle\('live',pl\)/);
 });
+
+
+test('Instagram embed measurements stabilize instead of resizing on every MEASURE message', () => {
+  assert.match(app, /let igMeasureTimer=0,igMeasureSamples=\[\]/);
+  assert.match(app, /if\(it\.igHeight\)return/);
+  assert.match(app, /igMeasureSamples\.push\(h\)/);
+  assert.match(app, /it\.igHeight=Math\.round\(stable\);eh=it\.igHeight;fitEmb\(\)/);
+  assert.doesNotMatch(app, /if\(d\?\.type==='MEASURE'&&h>100\)\{eh=h;fitEmb\(\)\}/);
+});
