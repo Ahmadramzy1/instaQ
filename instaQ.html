@@ -313,6 +313,13 @@ html[lang="fa"] .lgcard h1{letter-spacing:0;font-weight:700}
 .in input{background:none;border:0;color:var(--ink);font:inherit;padding:0 4px;outline:0;height:100%}
 .in input::placeholder{color:var(--muted)}
 .lin{height:52px;gap:8px}
+.sources{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:0}
+.source-option{position:relative;cursor:pointer}
+.source-option input{position:absolute;opacity:0;pointer-events:none}
+.source-option span{display:flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--border);border-radius:12px;color:var(--muted);background:var(--glass);font-size:12px;transition:.2s}
+.source-option input:checked+span{color:var(--on-brand);background:var(--grad);border-color:transparent;box-shadow:0 5px 18px -12px var(--brand)}
+.source-option input:focus-visible+span{outline:2px solid var(--brand);outline-offset:2px}
+.source-dot{width:8px;height:8px;border-radius:50%;background:currentColor}
 .lin .ico{color:var(--muted)}
 .lin input{flex:1;width:auto;min-width:0;text-align:center;font-size:16px}
 .go{position:relative;overflow:hidden;font-weight:700;border-radius:var(--radius-control);
@@ -420,6 +427,11 @@ body.locked .play-cult{display:none}
   <h1 data-i18n="loginTitle"></h1>
   <p data-i18n="loginSub"></p>
   <label class="in lin beam-focus"><span class="glow-ring-beam" aria-hidden="true"></span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><input id="ch" data-i18n-ph="chPh" autocomplete="off" spellcheck="false"></label>
+  <div class="sources" role="group" aria-label="Content sources">
+   <label class="source-option"><input type="checkbox" id="srcInstagram" checked><span><i class="source-dot"></i><b data-i18n="sourceInstagram"></b></span></label>
+   <label class="source-option"><input type="checkbox" id="srcYoutube"><span><i class="source-dot"></i><b data-i18n="sourceYoutube"></b></span></label>
+   <label class="source-option"><input type="checkbox" id="srcTiktok"><span><i class="source-dot"></i><b data-i18n="sourceTiktok"></b></span></label>
+  </div>
   <button class="go shine" id="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg><span data-i18n="connect"></span></button>
   <div id="loginMsg" class="lmsg" role="status" aria-live="polite"></div>
   <div class="lrow"><button class="lnk" id="pk2" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/><circle cx="7.5" cy="15.5" r="5.5"/></svg><span data-i18n="pusherKey"></span></button><button class="lnk" id="langBtn2" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span id="lgt2"></span></button></div>
@@ -462,7 +474,7 @@ body.locked .play-cult{display:none}
      <button class="ib" id="f5" data-i18n-title="fwd5"><svg class="st" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><text x="12" y="15.4" text-anchor="middle">5</text></svg></button>
      <button class="ib" id="nx" data-i18n-title="nextTitle"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
     </div>
-    <div class="grp"><button class="chip" id="sp" data-i18n-title="speedTitle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg><span id="spv">1×</span></button><button class="chip" id="lp" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg><span data-i18n="repeat"></span></button><button class="chip" id="au" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z"/></svg><span data-i18n="autoplay"></span></button><button class="chip" id="mu" aria-pressed="false" title="M"><svg class="i1" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg><svg class="i2" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6"/><path d="m17 9 6 6"/></svg><span data-i18n="mute"></span></button><button class="chip" id="fs" title="F"><svg class="i1" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="i2" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span data-i18n="fullscreen"></span></button></div>
+    <div class="grp"><label class="chip" title="Volume"><span aria-hidden="true">🔊</span><input id="vol" type="range" min="0" max="100" value="100" aria-label="Volume"></label><label class="chip" id="qualWrap" title="YouTube quality"><span>HD</span><select id="qual" aria-label="YouTube quality"><option value="auto">Auto</option><option value="144">144p</option><option value="360">360p</option><option value="480">480p</option><option value="720">720p</option><option value="1080">1080p</option></select></label><button class="chip" id="sp" data-i18n-title="speedTitle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg><span id="spv">1×</span></button><button class="chip" id="lp" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg><span data-i18n="repeat"></span></button><button class="chip" id="au" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z"/></svg><span data-i18n="autoplay"></span></button><button class="chip" id="mu" aria-pressed="false" title="M"><svg class="i1" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg><svg class="i2" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6"/><path d="m17 9 6 6"/></svg><span data-i18n="mute"></span></button><button class="chip" id="fs" title="F"><svg class="i1" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg><svg class="i2" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg><span data-i18n="fullscreen"></span></button></div>
    </div>
   </div>
   </div>
@@ -488,7 +500,7 @@ const lsGet=k=>{try{return localStorage.getItem(LS_PREFIX+k)}catch{return null}}
 const lsSet=(k,v)=>{try{localStorage.setItem(LS_PREFIX+k,v)}catch{}};
 const lsDel=k=>{try{localStorage.removeItem(LS_PREFIX+k)}catch{}};
 const MAXQ=150,MAXR=3,DEF_PUSHER='32cbd69e4b950bf97679';
-let cur=-1,ws=null,retry=0,room=0,live=false,gen=0,rtT=0,auto=true,loop=false,muted=false,rate=1,drag=false,V=null,eh=780,locked=false,running=0,svT=0,lastP=null,toastT=0;
+let cur=-1,ws=null,retry=0,room=0,live=false,gen=0,rtT=0,auto=true,loop=false,muted=false,rate=1,volume=1,quality='auto',drag=false,V=null,E=null,eh=780,locked=false,running=0,svT=0,lastP=null,toastT=0;
 let capLimit=parseInt(lsGet('cap_limit')||'0',10)||0,addedCount=parseInt(lsGet('cap_added')||'0',10)||0,userCap=parseInt(lsGet('cap_peruser')||'0',10)||0,embT=null;
 let dataSaver=lsGet('data_saver')==='1';
 const DATA_WINDOW=5;
@@ -511,9 +523,9 @@ const fmt=s=>isFinite(s)&&s>0?Math.floor(s/60)+':'+String(Math.floor(s%60)).padS
 
 /* ---- i18n ---- */
 const STR={
- fa:{dir:'rtl',title:'صف اینستاگرام | چت کیک',brand:'صف اینستاگرام',sub:'لینک‌های چت کیک، به ترتیب ارسال',
+ fa:{dir:'rtl',title:'صف ویدیو | چت کیک',brand:'صف ویدیو',sub:'لینک‌های چت کیک، به ترتیب ارسال',sourceInstagram:'اینستاگرام',sourceYoutube:'یوتیوب',sourceTiktok:'تیک‌تاک',
   chPrefix:'kick.com/',chPh:'نام چنل یا چت‌روم آیدی',loginTitle:'ورود به چت کیک',loginSub:'نام چنل یا چت‌روم آیدی را وارد کن',changeCh:'تغییر چنل',dedication:'تقدیم به بچه‌های خوب ایران',repo:'سورس پروژه در گیت‌هاب',github:'لینک گیت‌هاب',connect:'اتصال',settings:'تنظیمات',resolver:'مبدل دلخواه',pusherKey:'کلید Pusher',capLimitBtn:'محدودیت تعداد ورودی',userCapBtn:'سقف لینک هر کاربر',dataSaver:'Data Saver',clearSeen:'پاک کردن دیده‌شده‌ها',clearList:'پاک کردن کل لیست',
-  notConnected:'وصل نیست',finding:'در حال اتصال …',notFound:'chat id پیدا نشد؛ عدد chatroom id را جای اسم بنویس',
+  notConnected:'وصل نیست',finding:'در حال اتصال …',notFound:'chat id پیدا نشد؛ عدد chatroom id را جای اسم بنویس',sourceRequired:'حداقل یک منبع را انتخاب کن',
   connected:'وصل شد',disconnected:'قطع شد؛ اتصال دوباره …',gatewayClosed:'کیک دروازه‌ی چت را بست (خطای 4001)؛ کلید Pusher را در تنظیمات بررسی کن',
   waitTitle:'منتظر لینک اینستاگرام',waitSub:'لینک‌ها به ترتیب ارسال اینجا پخش می‌شوند.',
   shortcuts:'میانبرها: فاصله پخش · ← → جلو و عقب · N بعدی · P قبلی · M صدا · F تمام‌صفحه · Del حذف',
@@ -523,7 +535,7 @@ const STR={
   retry:'تلاش مجدد',showEmbed:'نمایش با پلیر اینستاگرام',openInsta:'باز کردن در اینستاگرام',
   noLink:'هنوز لینکی نیامده',emptyList:'لیست خالی است',nextNote:'لینک بعدی که بیاید همین‌جا پخش می‌شود.',
   queue:'صف پخش',unseenOnly:'فقط ندیده‌ها',freezeIntake:'توقف افزودن',allSeen:'همه‌ی ویدیوها دیده شده‌اند',noLinkList:'هنوز لینکی نیامده',
-  reel:'ریل',post:'پست',igtv:'IGTV',story:'استوری',
+  reel:'ریل',post:'پست',igtv:'IGTV',story:'استوری',youtube:'یوتیوب',tiktok:'تیک‌تاک',
   resolverPrompt:'آدرس مبدل شخصی (با {t} و {c} برای نوع و کد پست). باید خود ویدیو را برگرداند یا به آن ریدایرکت کند:',
   pusherPrompt:'کلید اپ Pusher کیک (خالی = پیش‌فرض):',
   capLimitPrompt:'حداکثر تعداد لینکی که وارد صف شود (خالی یا صفر = بدون محدودیت):',
@@ -537,9 +549,9 @@ const STR={
   speedTitle:'سرعت پخش',timeline:'نوار زمان ویدیو',langSwitch:'EN',removeTitle:'حذف از صف',
   cacheCleared:'لیست و کش صفحه کامل پاک شد',
   unseenOf:(a,b)=>`${a} ندیده از ${b}`,newLink:u=>`لینک تازه از @${u}`},
- en:{dir:'ltr',title:'Instagram Queue | Kick Chat',brand:'Instagram Queue',sub:'Kick chat links, in the order they arrive',
+ en:{dir:'ltr',title:'Video Queue | Kick Chat',brand:'Video Queue',sub:'Kick chat links, in the order they arrive',sourceInstagram:'Instagram',sourceYoutube:'YouTube',sourceTiktok:'TikTok',
   chPrefix:'kick.com/',chPh:'Channel name or chatroom ID',loginTitle:'Connect to Kick chat',loginSub:'Enter the channel name or chatroom ID',changeCh:'Change channel',dedication:'Dedicated to the good kids of Iran',repo:'Source on GitHub',github:'GitHub link',connect:'Connect',settings:'Settings',resolver:'Custom resolver',pusherKey:'Pusher key',capLimitBtn:'Intake limit',userCapBtn:'Per-user link limit',dataSaver:'Data Saver',clearSeen:'Clear watched',clearList:'Clear entire list',
-  notConnected:'Not connected',finding:'Connecting …',notFound:'Chat id not found — try the numeric chatroom id instead',
+  notConnected:'Not connected',finding:'Connecting …',notFound:'Chat id not found — try the numeric chatroom id instead',sourceRequired:'Select at least one source',
   connected:'Connected',disconnected:'Disconnected; reconnecting …',gatewayClosed:'Kick closed the chat gateway (4001) — check the Pusher key in settings',
   waitTitle:'Waiting for an Instagram link',waitSub:'Links play here in the order they were sent.',
   shortcuts:'Shortcuts: Space play · ← → seek · N next · P previous · M mute · F fullscreen · Del remove',
@@ -549,7 +561,7 @@ const STR={
   retry:'Retry',showEmbed:'Show with Instagram player',openInsta:'Open in Instagram',
   noLink:'No link yet',emptyList:'List is empty',nextNote:'The next link will play here.',
   queue:'Queue',unseenOnly:'Unseen only',freezeIntake:'Freeze intake',allSeen:'All videos seen',noLinkList:'No links yet',
-  reel:'Reel',post:'Post',igtv:'IGTV',story:'Story',
+  reel:'Reel',post:'Post',igtv:'IGTV',story:'Story',youtube:'YouTube',tiktok:'TikTok',
   resolverPrompt:'Personal resolver URL (use {t} and {c} for type and post code). Must return or redirect to the actual video:',
   pusherPrompt:'Kick Pusher app key (empty = default):',
   capLimitPrompt:'Max number of links allowed into the queue (empty or 0 = unlimited):',
@@ -565,8 +577,12 @@ const STR={
   unseenOf:(a,b)=>`${a} unseen of ${b}`,newLink:u=>`New link from @${u}`}
 };
 let LANG='fa',STK='notConnected',SRM=null;
+const sources={instagram:true,youtube:false,tiktok:false};
+const sourceChecks={instagram:()=>$('#srcInstagram').checked,youtube:()=>$('#srcYoutube').checked,tiktok:()=>$('#srcTiktok').checked};
+function saveSources(){lsSet('sources',JSON.stringify(sources))}
+function loadSources(){try{Object.assign(sources,JSON.parse(lsGet('sources')||'{}'))}catch{};for(const k of Object.keys(sourceChecks))$('#src'+k[0].toUpperCase()+k.slice(1)).checked=!!sources[k]}
 const t=k=>STR[LANG][k];
-const TN=()=>({reel:t('reel'),p:t('post'),tv:t('igtv'),story:t('story')});
+const TN=()=>({reel:t('reel'),p:t('post'),tv:t('igtv'),story:t('story'),youtube:t('youtube'),tiktok:t('tiktok')});
 const msg=(ti,s='',x='',icon='')=>`<div class="msg">${icon}<p>${ti}</p>${s}${x}</div>`;
 function idleScreen(){$('#frame').classList.remove('hasemb');if(cur<0)$('#scr').innerHTML=Q.length?msg(t('emptyList'),t('nextNote'),`<small>${t('shortcuts')}</small>`,EMPTY_I):msg(t('waitTitle'),t('waitSub'),`<small>${t('shortcuts')}</small>`,SEAL_I)}
 function resetHead(){$('#nn').textContent='—';$('#av').textContent='';$('#ns').textContent=t('noLink');$('#open').hidden=true;$('#rt').hidden=true}
@@ -589,20 +605,22 @@ function paintCaps(){$('#capVal').textContent=capLimit>0?`${Math.min(addedCount,
 function toast(s){const e=$('#toast');e.textContent=s;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),2600)}
 
 /* ---- Instagram link detection (with or without protocol) ---- */
-const RX=/(?:https?:\/\/)?(?:www\.|m\.)?(?:instagram\.com|instagr\.am)\/[^\s<>"'`]+/gi;
+const RX=/(?:https?:\/\/)?(?:www\.|m\.)?(?:instagram\.com|instagr\.am|youtu\.be|youtube\.com|tiktok\.com|vm\.tiktok\.com)\/[^\s<>"'`]+/gi;
 function parse(u){u=u.replace(/[.,!?)\]]+$/,'');if(!/^https?:\/\//i.test(u))u='https://'+u;let m;
+ if(m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([\w-]{6,})/i))return{platform:'youtube',t:'youtube',c:m[1],u};
+ if(m=u.match(/tiktok\.com\/(?:@[^/]+\/video\/|embed\/v\/)(\d+)/i)||u.match(/vm\.tiktok\.com\/([\w-]+)/i))return{platform:'tiktok',t:'tiktok',c:m[1],u};
  if(m=u.match(/\/share\/(?:(reel|p|tv)\/)?([\w-]+)/i))return{share:1,t:(m[1]||'p').toLowerCase(),c:m[2],u};
  if(m=u.match(/\/(?:[\w.]+\/)?(reels?|p|tv)\/([\w-]+)/i))return{t:m[1].toLowerCase().replace(/^reels$/,'reel'),c:m[2],u};
  if(m=u.match(/\/stories\/([\w.]+)\/(\d+)/i))return{t:'story',c:m[2],u};
  return null}
 const nxt=()=>{for(let i=cur+1;i<Q.length;i++)if(!Q[i].seen&&Q[i].t!=='story')return i;return -1};
 /* is the player free to take a new item? */
-function idle(){if(cur<0)return true;const c=Q[cur];if(!c)return true;if(c.emb)return !embT&&!loop;if(V)return V.ended;return c.t==='story'||c.st==='fail'||!!c.seen}
+function idle(){if(cur<0)return true;const c=Q[cur];if(!c)return true;if(c.emb||c.st==='embed')return !embT&&!loop;if(V)return V.ended;return c.t==='story'||c.st==='fail'||!!c.seen}
 function scan(text,user,ts){if(locked)return;
  for(const raw of text.match(RX)||[]){
   if(capLimit>0&&addedCount>=capLimit)break;
-  const l=parse(raw);if(!l)continue;
-  const k=l.t+':'+l.c;if(seen.has(k))continue;
+  const l=parse(raw);if(!l||!sourceChecks[l.platform||'instagram']())continue;
+  const k=(l.platform||'instagram')+':'+l.c;if(seen.has(k))continue;
   if(userCap>0&&Q.filter(x=>x.user===user&&!x.seen).length>=userCap){toast(t('userCapReached')(user));continue}
   seen.add(k);
   const it={...l,user,ts:ts?new Date(ts):new Date(),st:l.t==='story'?'link':'load',fresh:1,bad:[],tried:0,total:0,retried:0,noEmb:0,via:'direct'};
@@ -617,6 +635,7 @@ function scan(text,user,ts){if(locked)return;
 /* ---- direct video resolving: limited concurrency, cancel losers, one auto-retry ---- */
 const MIR=['d.ddinstagram.com','d.instagramfix.com','d.instagram7.com','kkinstagram.com'];
 const cands=it=>{const a=[],r=lsGet('resolver');if(r)a.push(r.replace(/\{t\}/g,it.t).replace(/\{c\}/g,it.c));
+ if(it.platform==='youtube'||it.platform==='tiktok')return a;
  for(const h of MIR){a.push(`https://${h}/p/${it.c}`);a.push(`https://${h}/reel/${it.c}`)}
  for(const h of['ddinstagram.com','instagramfix.com'])a.push(`https://${h}/videos/${it.c}/1`);
  return[...new Set(a)]};
@@ -640,6 +659,11 @@ async function resolve(it){
    const m=h.match(/instagram\.com\/(reel|p|tv)\/([\w-]+)/),k=m[1]+':'+m[2];
    if(seen.has(k)){removeItem(it);throw 0}   /* duplicate of an existing post */
    seen.add(k);it.t=m[1];it.c=m[2];it.share=0;saveSoon()}
+  if(it.platform==='youtube'||it.platform==='tiktok'){
+   if(it.platform==='tiktok'&&!/^\d+$/.test(it.c)){try{const oh=await get(`https://www.tiktok.com/oembed?url=${encodeURIComponent(it.u)}`,x=>/video_id/.test(x),9000,sig),om=oh.match(/"video_id"\s*:\s*"?(\d+)/);if(om)it.c=om[1]}catch{}}
+   if(it.platform==='tiktok'&&!/^\d+$/.test(it.c))throw 0;
+   it.st='embed';it.src=it.platform==='youtube'?`https://www.youtube-nocookie.com/embed/${encodeURIComponent(it.c)}?autoplay=1&rel=0&playsinline=1`:`https://www.tiktok.com/player/v1/${encodeURIComponent(it.c)}?autoplay=1&loop=0&description=1`;it.via='embed';render();if(Q[cur]===it)play(cur,1);return;
+  }
   const bad=it.bad,list=cands(it).filter(u=>!bad.includes(u));
   it.total=list.length+1;upd(it);
   const jobs=[it.noEmb?Promise.reject(0):fromEmbed(it,sig).then(s=>{if(bad.includes(s))throw 0;return{s,v:'emb'}}),
@@ -669,6 +693,7 @@ async function chatId(s){
  const id=JSON.parse(x).chatroom.id;if(!id)throw 0;lsSet('room_'+s,id);return id}
 function closeWs(){live=false;clearTimeout(rtT);if(ws){ws.onclose=ws.onerror=ws.onmessage=null;try{ws.close()}catch{}ws=null}}
 async function connect(){
+ if(!Object.keys(sourceChecks).some(k=>sourceChecks[k]())){toast(t('sourceRequired'));return}
  const s=$('#ch').value.trim().replace(/^.*kick\.com\//i,'').replace(/[/?#@].*$/,'').toLowerCase();if(!s){$('#ch').focus();return}
  lsSet('kick_ch',s);closeWs();live=true;retry=0;const g=++gen;
  setStatus('wait','finding');
@@ -702,6 +727,7 @@ function syncDataWindow(){
    continue;
   }
   const r=RQ.indexOf(it);if(r>=0)RQ.splice(r,1);
+  /* if(it.ac)it.ac.abort(); */
   if(it.ac){it.ac.abort();it.ac=null}
   const v=it.el?.querySelector('.th video');if(v){v.pause();v.removeAttribute('src');try{v.load()}catch{}v.remove()}
   it.tvs=null;
@@ -748,9 +774,9 @@ function removeAt(i,forget){const it=Q[i];if(!it)return;it.dropped=1;it.ac&&it.a
  render()}
 const removeItem=it=>removeAt(Q.indexOf(it));
 const saveSoon=()=>{clearTimeout(svT);svT=setTimeout(saveQueue,500)};
-function saveQueue(){lsSet('queue',JSON.stringify(Q.map(it=>({t:it.t,c:it.c,u:it.u,share:it.share?1:0,user:it.user,ts:it.ts.toISOString(),seen:!!it.seen}))))}
+function saveQueue(){lsSet('queue',JSON.stringify(Q.map(it=>({platform:it.platform||'instagram',t:it.t,c:it.c,u:it.u,share:it.share?1:0,user:it.user,ts:it.ts.toISOString(),seen:!!it.seen}))))}
 function loadQueue(){try{const raw=lsGet('queue');if(!raw)return;JSON.parse(raw).slice(-MAXQ).forEach(o=>{
- const it={t:o.t,c:o.c,u:o.u,share:o.share?1:0,user:o.user,ts:new Date(o.ts),seen:!!o.seen,st:o.t==='story'?'link':'load',fresh:0,bad:[],tried:0,total:0,retried:0,noEmb:0,via:'direct'};
+ const it={platform:o.platform||'instagram',t:o.t,c:o.c,u:o.u,share:o.share?1:0,user:o.user,ts:new Date(o.ts),seen:!!o.seen,st:o.t==='story'?'link':'load',fresh:0,bad:[],tried:0,total:0,retried:0,noEmb:0,via:'direct'};
  Q.push(it);seen.add(it.t+':'+it.c)})}catch{}syncDataWindow()}
 function head(it){
  $('#nn').textContent='@'+it.user;$('#av').textContent=(it.user[0]||'?').toUpperCase();
@@ -766,6 +792,8 @@ function wake(ms=3000){const f=$('#frame');clearTimeout(uiT);if(ms<=0){f.classLi
  f.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'||e.pointerType==='pen')wake(0)});
  addEventListener('keydown',()=>wake(),{passive:true})}
 function swapFx(){const f=$('#frame');f.classList.remove('swap');void f.offsetWidth;f.classList.add('swap')}
+function setEmbedVolume(){if(!E)return;const n=Math.round((muted?0:volume)*100);try{E.contentWindow.postMessage(JSON.stringify({event:'command',func:'setVolume',args:[n]}),'*')}catch{}}
+function reloadEmbed(){if(Q[cur]?.platform==='youtube')play(cur,1)}
 function play(i,soft){
  clearTimeout(embT);embT=null;
  if(i<0||i>=Q.length)return;const it=Q[i],scr=$('#scr');
@@ -774,6 +802,7 @@ function play(i,soft){
  if(it.t==='story'){V=null;scr.innerHTML=msg(t('storyTitle'),t('storySub'));return}
  if(it.st==='load'){V=null;const r=RQ.indexOf(it);if(r>0){RQ.splice(r,1);RQ.unshift(it)}else if(r<0&&!it.queued&&!it.ac)enqueue(it,true);
   scr.innerHTML=`<div class="msg"><i class="sp"></i><p>${t('preparing')}</p><small id="prog">${prog(it)}</small></div>`;return}
+ if(it.st==='embed'){V=null;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe title="${esc(it.platform==='youtube'?'YouTube':'TikTok')} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen src="${esc(it.src)}"></iframe></div>`;fitEmb();setEmbedVolume();embT=setTimeout(()=>{if(Q[cur]===it&&!loop){it.seen=true;render();const n=nxt();if(auto&&n>=0)play(n)}},60000);return}
  /* direct source failed once → fall back to Instagram's own player instead of a dead end */
  if(it.st==='fail'&&!it.emb){it.emb=1;toast(t('showEmbed'))}
  if(it.emb){clearTimeout(embT);embT=null;V=null;eh=780;$('#frame').classList.add('hasemb');scr.innerHTML=`<div class="emb"><iframe allowfullscreen allow="autoplay;fullscreen" src="https://www.instagram.com/${esc(it.t)}/${esc(it.c)}/embed"></iframe></div>`;fitEmb();
@@ -805,7 +834,7 @@ $('#pv').onclick=()=>play(cur-1);$('#nx').onclick=next;
 $('#pp').onclick=()=>{if(V)V.paused?V.play().catch(()=>{}):V.pause()};
 $('#b5').onclick=()=>{if(V)V.currentTime-=5};$('#f5').onclick=()=>{if(V)V.currentTime+=5};
 const tg=(id,fn)=>$(id).onclick=e=>{const b=e.currentTarget,p=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',p);fn(p)};
-tg('#au',p=>auto=p);tg('#lp',p=>{loop=p;if(V)V.loop=p});tg('#mu',p=>{muted=p;if(V)V.muted=p});tg('#hw',render);tg('#freeze',p=>locked=p);
+tg('#au',p=>auto=p);tg('#lp',p=>{loop=p;if(V)V.loop=p});tg('#mu',p=>{muted=p;if(V)V.muted=p});$('#vol').value=String(Math.round(volume*100));$('#vol').oninput=e=>{volume=+e.target.value/100;muted=volume===0;if(V){V.volume=volume;V.muted=muted}setEmbedVolume();};$('#qual').onchange=e=>{quality=e.target.value;reloadEmbed()};tg('#hw',render);tg('#freeze',p=>locked=p);
 $('#sp').onclick=e=>{const r=[1,1.25,1.5,2];rate=r[(r.indexOf(rate)+1)%4];$('#spv').textContent=rate+'×';if(V)V.playbackRate=rate};
 const fs=()=>document.fullscreenElement?document.exitFullscreen():$('#frame').requestFullscreen?.();
 $('#fs').onclick=fs;
@@ -830,6 +859,7 @@ const setPk=()=>{const v=prompt(t('pusherPrompt'),lsGet('pusher_key')||'');close
 $('#pk').onclick=setPk;$('#pk2').onclick=setPk;
 $('#chg').onclick=()=>{closeMenu();closeWs();setStatus('','notConnected');lockUI(true);$('#ch').focus()};
 $('#go').onclick=connect;$('#ch').onkeydown=e=>{if(e.key==='Enter')connect()};
+for(const [k,sel] of Object.entries({instagram:'#srcInstagram',youtube:'#srcYoutube',tiktok:'#srcTiktok'}))$(sel).onchange=()=>{sources[k]=$(sel).checked;saveSources()};
 
 /* timeline + hover tooltip */
 const sk=$('#sk'),bar=$('.bar'),tip=$('#tip');
@@ -947,6 +977,7 @@ spotlight($('aside'));magnetic($('#go'));cursor();
 duskShader($('#dusk'),()=>STK==='finding'?1:Math.min(1,$('#ch').value.trim().length/14));
 
 /* ---- init ---- */
+loadSources();
 loadQueue();
 $('#dataSaverBtn').setAttribute('aria-pressed',String(dataSaver));$('#dataSaverVal').textContent=dataSaver?'ON':'OFF';
 applyLang(lsGet('ui_lang')||'fa');
@@ -956,3 +987,10 @@ if(q){$('#ch').value=q;connect()}
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
