@@ -149,15 +149,16 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 370px;
 .stage{display:flex;flex-direction:column;min-height:0}
 .frame{flex:1;min-height:240px;position:relative;background:radial-gradient(ellipse at 50% 30%,#15151d,#060609 72%);border:1px solid var(--hairline);border-radius:var(--radius-panel);overflow:hidden;
  transition:box-shadow var(--dur-slow) var(--ease-out),border-color var(--dur-slow) var(--ease-out)}
-.frame>.glow-ring-beam{opacity:0;transition:opacity var(--dur-slow) var(--ease-out)}
-.frame.live{box-shadow:var(--shadow-glow-soft);border-color:transparent}
-.frame.live>.glow-ring-beam{opacity:1}
+.frame>.glow-ring-beam{display:none}
+.frame.live{box-shadow:var(--shadow-glow-soft);border-color:rgb(106 168 236/.22)}
 .frame:fullscreen{border-radius:0;border:0}
-.frame.swap .scr{animation:fade var(--dur-slow) var(--ease-out)}
+.frame.swap .scr{animation:none}
 .scr{position:absolute;inset:0;display:grid;place-items:center}
 .scr video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;cursor:pointer}
 .emb{position:absolute;left:50%;top:50%;width:540px;transform-origin:center}
-.emb iframe{width:100%;height:100%;border:0;background:#fff;display:block;border-radius:var(--radius-control)}
+.emb iframe{width:100%;height:100%;border:0;background:#000;display:block;border-radius:var(--radius-control)}
+.emb iframe.platform-player{opacity:0;transition:opacity var(--dur-fast) var(--ease-out)}
+.emb iframe.platform-player.ready{opacity:1}
 .msg{text-align:center;padding:24px;max-width:460px;color:var(--ink-soft);position:relative;z-index:1}
 .msg p{color:var(--ink);font-family:var(--font-heading);font-size:20px;line-height:28px;font-weight:500;letter-spacing:-.02em;margin-bottom:8px}
 html[lang="fa"] .msg p{letter-spacing:0;font-weight:700}
@@ -815,10 +816,13 @@ function controlAvailability(kind){
 function mountEmbed(it,scr,epoch){
  const yt=it.platform==='youtube';mediaRatio=it.ratio||(yt&&!/shorts\//.test(it.u)?16/9:9/16);
  $('#frame').classList.add('hasemb');controlAvailability(it.platform);
- const url=new URL(it.src);url.searchParams.set('controls','1');
- if(yt){url.searchParams.set('enablejsapi','1');url.searchParams.set('origin',location.origin);url.searchParams.set('controls','0')}
- else{url.searchParams.set('description','0');url.searchParams.set('music_info','0')}
- scr.innerHTML=`<div class="emb"><iframe id="platformPlayer" title="${yt?'YouTube':'TikTok'} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" src="${esc(url.href)}"></iframe></div>`;
+ const url=new URL(it.src);
+ if(yt){url.searchParams.set('controls','0');url.searchParams.set('enablejsapi','1');url.searchParams.set('origin',location.origin)}
+ else{
+  /* Keep only TikTok's volume control; hide the pause/play overlay and other native chrome. */
+  for(const [k,v] of Object.entries({controls:'1',description:'0',music_info:'0',play_button:'0',progress_bar:'0',volume_control:'1',fullscreen_button:'0',timestamp:'0',closed_caption:'0',native_context_menu:'0',rel:'0'}))url.searchParams.set(k,v)
+ }
+ scr.innerHTML=`<div class="emb"><iframe class="platform-player" id="platformPlayer" title="${yt?'YouTube':'TikTok'} video" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" src="${esc(url.href)}"></iframe></div>`;
  E=scr.querySelector('iframe');fitEmb();
  // oEmbed supplies the published display dimensions; Shorts default to portrait until metadata arrives.
  const meta=yt?`https://www.youtube.com/oembed?url=${encodeURIComponent(it.u)}&format=json`:`https://www.tiktok.com/oembed?url=${encodeURIComponent(it.u)}`;
@@ -826,16 +830,16 @@ function mountEmbed(it,scr,epoch){
  if(yt)loadYouTubeAPI().then(YT=>{if(epoch!==playerEpoch)return;ytPlayer=new YT.Player(E,{events:{onReady:e=>{
   if(epoch!==playerEpoch)return;const p=e.target;
   V={get paused(){return p.getPlayerState()!==1},get ended(){return p.getPlayerState()===0},get currentTime(){return p.getCurrentTime()||0},set currentTime(v){p.seekTo(Math.max(0,v),true)},get duration(){return p.getDuration()||0},get buffered(){return{length:0}},play(){p.playVideo();return Promise.resolve()},pause(){p.pauseVideo()},set volume(v){p.setVolume(v*100)},set muted(v){v?p.mute():p.unMute()},set playbackRate(v){p.setPlaybackRate(v)},set loop(v){}};
-  setEmbedVolume();V.playbackRate=rate;V.play();
+  E?.classList.add('ready');setEmbedVolume();V.playbackRate=rate;V.play();
  },onStateChange:e=>{if(epoch===playerEpoch&&e.data===0)playbackEnded(it)},onError:()=>{if(epoch===playerEpoch)toast(LANG==='fa'?'این ویدیو در پلیر یوتیوب قابل پخش نیست؛ لینک بالای پلیر را باز کن':'This video cannot be embedded. Open the source link.')}}})}).catch(()=>{if(epoch===playerEpoch)toast('YouTube player API failed to load')});
  else{
   const frame=E,state={time:0,duration:0,paused:true,ended:false};
   const send=(type,value)=>frame.contentWindow.postMessage({'x-tiktok-player':true,type,value},'https://www.tiktok.com');
   V={get paused(){return state.paused},get ended(){return state.ended},get currentTime(){return state.time},set currentTime(v){send('seekTo',Math.max(0,v))},get duration(){return state.duration},get buffered(){return{length:0}},play(){send('play');return Promise.resolve()},pause(){send('pause')},set muted(v){send(v?'mute':'unMute')},set volume(v){},set loop(v){}};
   const receive=e=>{if(epoch!==playerEpoch){removeEventListener('message',receive);return}if(e.source!==frame.contentWindow||e.origin!=='https://www.tiktok.com')return;const d=e.data;if(!d?.['x-tiktok-player'])return;
-   if(d.type==='onPlayerReady'){setEmbedVolume();V.play()}
+   if(d.type==='onPlayerReady'){frame.classList.add('ready');setEmbedVolume();V.play()}
    if(d.type==='onCurrentTime'){state.time=Number(d.value?.currentTime)||0;state.duration=Number(d.value?.duration)||0}
-   if(d.type==='onStateChange'){state.paused=d.value!==1;state.ended=d.value===0;if(state.ended)playbackEnded(it)}
+   if(d.type==='onStateChange'){const st=Number(d.value);if(st===1){state.paused=false;state.ended=false}else if(st===2){state.paused=true;state.ended=false}else if(st===0){state.paused=true;state.ended=true;playbackEnded(it)}}
    if(d.type==='onVolumeChange'){$('#vol').value=Number(d.value)}
    if(d.type==='onMute'){muted=!!d.value;$('#mu').setAttribute('aria-pressed',String(muted))}
   };addEventListener('message',receive);embedCleanup=()=>removeEventListener('message',receive);
@@ -917,10 +921,11 @@ sk.onchange=()=>{drag=false};
 bar.addEventListener('pointermove',e=>{const r=bar.getBoundingClientRect(),x=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));
  tip.style.left=x*100+'%';tip.textContent=V&&V.duration?fmt(x*V.duration):'0:00';tip.classList.add('on')});
 bar.addEventListener('pointerleave',()=>tip.classList.remove('on'));
-{const tc=$('#tc'),td=$('#td'),bf=$('#bf'),pp=$('#pp'),lst=$('#list'),frm=$('#frame'),put=(e,v)=>{if(e.textContent!==v)e.textContent=v};let lp=-1,lb=-1;
+{const tc=$('#tc'),td=$('#td'),bf=$('#bf'),pp=$('#pp'),lst=$('#list'),frm=$('#frame'),put=(e,v)=>{if(e.textContent!==v)e.textContent=v};let lp=-1,lb=-1,lastFrameLive=null;
 (function tick(){
- const pl=!!V&&!V.paused;
- if(pl!==lastP){lastP=pl;pp.innerHTML=pl?IC.pause:IC.play;pp.classList.toggle('playing',pl);lst.classList.toggle('paused',!pl);frm.classList.toggle('live',pl);
+ const pl=!!V&&!V.paused,frameLive=!!V&&!V.ended;
+ if(frameLive!==lastFrameLive){lastFrameLive=frameLive;frm.classList.toggle('live',frameLive)}
+ if(pl!==lastP){lastP=pl;pp.innerHTML=pl?IC.pause:IC.play;pp.classList.toggle('playing',pl);lst.classList.toggle('paused',!pl);
   if(pl&&matchMedia('(hover:hover)').matches&&!frm.matches(':hover'))wake(0)}   /* playing with the mouse away → controls start hidden */
  if(V){const d=V.duration||0,c=V.currentTime,it=Q[cur];
   if(d&&!drag){const p=Math.round(c/d*1e3)/10;if(p!==lp){lp=p;sk.value=p*10;sk.style.setProperty('--p',p+'%')}}
