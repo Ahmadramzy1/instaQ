@@ -611,14 +611,20 @@ function paintCaps(){$('#capVal').textContent=capLimit>0?`${Math.min(addedCount,
 function toast(s){const e=$('#toast');e.textContent=s;e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),2600)}
 
 /* ---- Instagram link detection (with or without protocol) ---- */
-const RX=/(?:https?:\/\/)?(?:www\.|m\.)?(?:instagram\.com|instagr\.am|youtu\.be|youtube\.com|tiktok\.com|vm\.tiktok\.com)\/[^\s<>"'`]+/gi;
+const RX=/(?:https?:\/\/)?(?:www\.|m\.)?(?:instagram\.com|instagr\.am|youtu\.be|youtube\.com|(?:vm\.|vt\.)?tiktok\.com)\/[^\s<>"'`]+/gi;
 function parse(u){u=u.replace(/[.,!?)\]]+$/,'');if(!/^https?:\/\//i.test(u))u='https://'+u;let m;
  if(m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([\w-]{6,})/i))return{platform:'youtube',t:'youtube',c:m[1],u};
- if(m=u.match(/tiktok\.com\/(?:@[^/]+\/video\/|embed\/v\/)(\d+)/i)||u.match(/vm\.tiktok\.com\/([\w-]+)/i))return{platform:'tiktok',t:'tiktok',c:m[1],u};
+ if(m=u.match(/tiktok\.com\/(?:@[^/]+\/video\/|embed\/v\/)(\d+)/i)||u.match(/(?:vm|vt)\.tiktok\.com\/([\w-]+)/i))return{platform:'tiktok',t:'tiktok',c:m[1],u};
  if(m=u.match(/\/share\/(?:(reel|p|tv)\/)?([\w-]+)/i))return{share:1,t:(m[1]||'p').toLowerCase(),c:m[2],u};
  if(m=u.match(/\/(?:[\w.]+\/)?(reels?|p|tv)\/([\w-]+)/i))return{t:m[1].toLowerCase().replace(/^reels$/,'reel'),c:m[2],u};
  if(m=u.match(/\/stories\/([\w.]+)\/(\d+)/i))return{t:'story',c:m[2],u};
  return null}
+function tiktokVideoId(text){const s=text.replace(/\\\//g,'/').replace(/&quot;/g,'"');return s.match(/"video_id"\s*:\s*"?(\d+)/)?.[1]||s.match(/data-video-id\s*=\s*["'](\d+)/)?.[1]||s.match(/tiktok\.com\/@[^/\s"<>]+\/video\/(\d+)/)?.[1]||null}
+async function resolveTikTokShort(it,sig){
+ let id;try{const x=await get(`https://www.tiktok.com/oembed?url=${encodeURIComponent(it.u)}`,x=>!!tiktokVideoId(x),9000,sig);id=tiktokVideoId(x)}catch(e){if(sig?.aborted)throw e}
+ if(!id){const x=await get(it.u,x=>!!tiktokVideoId(x),9000,sig);id=tiktokVideoId(x)}
+ if(!id)throw Error('TikTok short link could not be resolved');it.c=id;
+}
 const nxt=()=>{for(let i=cur+1;i<Q.length;i++)if(!Q[i].seen&&Q[i].t!=='story')return i;return -1};
 /* is the player free to take a new item? */
 function idle(){if(cur<0)return true;const c=Q[cur];if(!c)return true;if(V)return V.ended&&!loop;return false}
@@ -666,7 +672,7 @@ async function resolve(it){
    if(seen.has(k)){removeItem(it);throw 0}   /* duplicate of an existing post */
    seen.add(k);it.t=m[1];it.c=m[2];it.share=0;saveSoon()}
   if(it.platform==='youtube'||it.platform==='tiktok'){
-   if(it.platform==='tiktok'&&!/^\d+$/.test(it.c)){try{const oh=await get(`https://www.tiktok.com/oembed?url=${encodeURIComponent(it.u)}`,x=>/video_id/.test(x),9000,sig),om=oh.match(/"video_id"\s*:\s*"?(\d+)/);if(om)it.c=om[1]}catch{}}
+   if(it.platform==='tiktok'&&!/^\d+$/.test(it.c))await resolveTikTokShort(it,sig);
    if(it.platform==='tiktok'&&!/^\d+$/.test(it.c))throw 0;
    it.st='embed';it.src=it.platform==='youtube'?`https://www.youtube-nocookie.com/embed/${encodeURIComponent(it.c)}?autoplay=1&rel=0&playsinline=1`:`https://www.tiktok.com/player/v1/${encodeURIComponent(it.c)}?autoplay=1&loop=0&description=1`;it.via='embed';render();if(Q[cur]===it)play(cur,1);return;
   }
