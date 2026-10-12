@@ -7,7 +7,7 @@ const playerCode=app.slice(app.indexOf('let ytAPI='),app.indexOf('function play(
 function harness(platform){
  const elements=new Map(),messages=[],listeners=new Map();let events;
  const element=()=>({disabled:false,style:{},classList:{add(){}},append(){},setAttribute(){}});
- const frame={contentWindow:{postMessage:(...args)=>messages.push(args)}};
+ const frame={classList:{add(){}},contentWindow:{postMessage:(...args)=>messages.push(args)}};
  const it={platform,c:'123',u:platform==='youtube'?'https://youtube.com/watch?v=123':'https://www.tiktok.com/@test/video/123',src:platform==='youtube'?'https://www.youtube-nocookie.com/embed/123':'https://www.tiktok.com/player/v1/123'};
  const calls=[];
  const p={getPlayerState:()=>1,getCurrentTime:()=>12,getDuration:()=>90,setVolume:v=>calls.push(['volume',v]),seekTo:v=>calls.push(['seek',v]),mute:()=>calls.push(['mute']),unMute:()=>{},setPlaybackRate:()=>{},playVideo:()=>calls.push(['play']),pauseVideo:()=>calls.push(['pause'])};
