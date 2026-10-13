@@ -419,6 +419,7 @@ body.locked .play-cult{display:none}
 #vol{width:90px;accent-color:var(--brand)}
 button:disabled,input:disabled{opacity:.4;cursor:not-allowed}
 #qualWrap[hidden],#aspectWrap[hidden]{display:none}
+.chat-detail{max-width:1440px;margin:8px auto;padding:8px 18px;font-size:12px;color:var(--muted);overflow-wrap:anywhere}.chat-detail[hidden],body.locked .chat-detail{display:none}
 </style>
 </head>
 <body class="locked">
@@ -438,7 +439,7 @@ button:disabled,input:disabled{opacity:.4;cursor:not-allowed}
   </div>
   <button class="go shine" id="go"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg><span data-i18n="connect"></span></button>
   <div id="loginMsg" class="lmsg" role="status" aria-live="polite"></div>
-  <div class="lrow"><button class="lnk" id="pk2" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/><circle cx="7.5" cy="15.5" r="5.5"/></svg><span data-i18n="pusherKey"></span></button><button class="lnk" id="langBtn2" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span id="lgt2"></span></button></div>
+  <div class="lrow"><button class="lnk" id="pk2" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/><circle cx="7.5" cy="15.5" r="5.5"/></svg><span data-i18n="reconnectChat"></span></button><button class="lnk" id="langBtn2" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span id="lgt2"></span></button></div>
  </div>
 </section>
 <header class="top glass">
@@ -451,7 +452,7 @@ button:disabled,input:disabled{opacity:.4;cursor:not-allowed}
   <button class="icon-btn" id="langBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span id="lgt">EN</span></button><a class="gh" href="https://github.com/Ahmadramzy1/instaQ" target="_blank" rel="noopener" data-i18n-title="repo" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg></a>
   <details class="menu"><summary><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> <span data-i18n="settings"></span></summary><div class="glass-popup">
    <button id="rs" data-i18n="resolver" hidden></button>
-   <button id="pk" data-i18n="pusherKey" hidden></button>
+   <button id="pk" data-i18n="reconnectChat"></button>
    <button id="chg"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg><span data-i18n="changeCh"></span></button>
    <hr>
    <button id="cls"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg><span data-i18n="clearSeen"></span></button>
@@ -461,6 +462,7 @@ button:disabled,input:disabled{opacity:.4;cursor:not-allowed}
   </div></details>
  </div>
 </header>
+<div id="chatDetail" class="chat-detail" role="status" hidden></div>
 <main>
  <section class="stage">
   <div class="frame" id="frame"><span class="glow-ring-beam" aria-hidden="true"></span><div class="scr" id="scr"></div>
@@ -496,6 +498,7 @@ button:disabled,input:disabled{opacity:.4;cursor:not-allowed}
  <div class="ded" data-i18n="dedication"></div>
 </footer>
 <div id="toast" class="toast glass-popup" role="status" aria-live="polite"></div>
+<script src="./kick-realtime.js?v=centrifugo-1"></script>
 <script>
 const $=s=>document.querySelector(s),Q=[],seen=new Set(),RQ=[];
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -504,8 +507,8 @@ const LS_PREFIX='instaq:';
 const lsGet=k=>{try{return localStorage.getItem(LS_PREFIX+k)}catch{return null}};
 const lsSet=(k,v)=>{try{localStorage.setItem(LS_PREFIX+k,v)}catch{}};
 const lsDel=k=>{try{localStorage.removeItem(LS_PREFIX+k)}catch{}};
-const MAXQ=150,MAXR=3,DEF_PUSHER='32cbd69e4b950bf97679';
-let cur=-1,ws=null,retry=0,room=0,live=false,gen=0,rtT=0,auto=true,loop=false,muted=false,rate=1,volume=1,quality='auto',drag=false,V=null,E=null,eh=780,locked=false,running=0,svT=0,lastP=null,toastT=0;
+const MAXQ=150,MAXR=3;
+let cur=-1,ws=null,live=false,gen=0,auto=true,loop=false,muted=false,rate=1,volume=1,quality='auto',drag=false,V=null,E=null,eh=780,locked=false,running=0,svT=0,lastP=null,toastT=0;
 let igMeasureTimer=0,igMeasureSamples=[];
 let capLimit=parseInt(lsGet('cap_limit')||'0',10)||0,addedCount=parseInt(lsGet('cap_added')||'0',10)||0,userCap=parseInt(lsGet('cap_peruser')||'0',10)||0,embT=null;
 let dataSaver=lsGet('data_saver')==='1';
@@ -530,8 +533,8 @@ const fmt=s=>isFinite(s)&&s>0?Math.floor(s/60)+':'+String(Math.floor(s%60)).padS
 /* ---- i18n ---- */
 const STR={
  fa:{dir:'rtl',title:'صف ویدیو | چت کیک',brand:'صف ویدیو',sub:'لینک‌های چت کیک، به ترتیب ارسال',sourceInstagram:'اینستاگرام',sourceYoutube:'یوتیوب',sourceTiktok:'تیک‌تاک',
-  chPrefix:'kick.com/',chPh:'نام چنل یا چت‌روم آیدی',loginTitle:'ورود به چت کیک',loginSub:'نام چنل یا چت‌روم آیدی را وارد کن',changeCh:'تغییر چنل',dedication:'تقدیم به بچه‌های خوب ایران',repo:'سورس پروژه در گیت‌هاب',github:'لینک گیت‌هاب',connect:'اتصال',settings:'تنظیمات',resolver:'مبدل دلخواه',pusherKey:'کلید Pusher',capLimitBtn:'محدودیت تعداد ورودی',userCapBtn:'سقف لینک هر کاربر',dataSaver:'Data Saver',clearSeen:'پاک کردن دیده‌شده‌ها',clearList:'پاک کردن کل لیست',
-  notConnected:'وصل نیست',finding:'در حال اتصال …',notFound:'chat id پیدا نشد؛ عدد chatroom id را جای اسم بنویس',sourceRequired:'حداقل یک منبع را انتخاب کن',
+  chPrefix:'kick.com/',chPh:'نام کانال یا لینک Kick',loginTitle:'ورود به چت کیک',loginSub:'نام کانال یا لینک آن در Kick را وارد کن',changeCh:'تغییر چنل',dedication:'تقدیم به بچه‌های خوب ایران',repo:'سورس پروژه در گیت‌هاب',github:'لینک گیت‌هاب',connect:'اتصال',settings:'تنظیمات',resolver:'مبدل دلخواه',reconnectChat:'اتصال مجدد چت',capLimitBtn:'محدودیت تعداد ورودی',userCapBtn:'سقف لینک هر کاربر',dataSaver:'Data Saver',clearSeen:'پاک کردن دیده‌شده‌ها',clearList:'پاک کردن کل لیست',
+  notConnected:'وصل نیست',finding:'در حال اتصال …',notFound:'نام کانال یا لینک Kick معتبر را وارد کن؛ شناسهٔ عددی چت پشتیبانی نمی‌شود',sourceRequired:'حداقل یک منبع را انتخاب کن',
   connected:'وصل شد',disconnected:'قطع شد؛ اتصال دوباره …',gatewayClosed:'کیک دروازه‌ی چت را بست (خطای 4001)؛ کلید Pusher را در تنظیمات بررسی کن',
   waitTitle:'منتظر لینک اینستاگرام',waitSub:'لینک‌ها به ترتیب ارسال اینجا پخش می‌شوند.',
   shortcuts:'میانبرها: فاصله پخش · ← → جلو و عقب · N بعدی · P قبلی · M صدا · F تمام‌صفحه · Del حذف',
@@ -556,8 +559,8 @@ const STR={
   cacheCleared:'لیست و کش صفحه کامل پاک شد',
   unseenOf:(a,b)=>`${a} ندیده از ${b}`,newLink:u=>`لینک تازه از @${u}`},
  en:{dir:'ltr',title:'Video Queue | Kick Chat',brand:'Video Queue',sub:'Kick chat links, in the order they arrive',sourceInstagram:'Instagram',sourceYoutube:'YouTube',sourceTiktok:'TikTok',
-  chPrefix:'kick.com/',chPh:'Channel name or chatroom ID',loginTitle:'Connect to Kick chat',loginSub:'Enter the channel name or chatroom ID',changeCh:'Change channel',dedication:'Dedicated to the good kids of Iran',repo:'Source on GitHub',github:'GitHub link',connect:'Connect',settings:'Settings',resolver:'Custom resolver',pusherKey:'Pusher key',capLimitBtn:'Intake limit',userCapBtn:'Per-user link limit',dataSaver:'Data Saver',clearSeen:'Clear watched',clearList:'Clear entire list',
-  notConnected:'Not connected',finding:'Connecting …',notFound:'Chat id not found — try the numeric chatroom id instead',sourceRequired:'Select at least one source',
+  chPrefix:'kick.com/',chPh:'Channel name or Kick URL',loginTitle:'Connect to Kick chat',loginSub:'Enter the channel name or its Kick URL',changeCh:'Change channel',dedication:'Dedicated to the good kids of Iran',repo:'Source on GitHub',github:'GitHub link',connect:'Connect',settings:'Settings',resolver:'Custom resolver',reconnectChat:'Reconnect chat',capLimitBtn:'Intake limit',userCapBtn:'Per-user link limit',dataSaver:'Data Saver',clearSeen:'Clear watched',clearList:'Clear entire list',
+  notConnected:'Not connected',finding:'Connecting …',notFound:'Enter a valid channel name or Kick URL; numeric chatroom IDs are not supported',sourceRequired:'Select at least one source',
   connected:'Connected',disconnected:'Disconnected; reconnecting …',gatewayClosed:'Kick closed the chat gateway (4001) — check the Pusher key in settings',
   waitTitle:'Waiting for an Instagram link',waitSub:'Links play here in the order they were sent.',
   shortcuts:'Shortcuts: Space play · ← → seek · N next · P previous · M mute · F fullscreen · Del remove',
@@ -582,7 +585,7 @@ const STR={
   cacheCleared:'List and page cache fully cleared',
   unseenOf:(a,b)=>`${a} unseen of ${b}`,newLink:u=>`New link from @${u}`}
 };
-let LANG='fa',STK='notConnected',SRM=null;
+let LANG='fa',STK='notConnected',SRM=null,chatDetail='',chatReceived=0;
 const sources={instagram:true,youtube:false,tiktok:false};
 const sourceChecks={instagram:()=>$('#srcInstagram').checked,youtube:()=>$('#srcYoutube').checked,tiktok:()=>$('#srcTiktok').checked};
 function saveSources(){lsSet('sources',JSON.stringify(sources))}
@@ -604,7 +607,7 @@ function applyLang(l){LANG=l;lsSet('ui_lang',l);const d=STR[l];
  render()}
 $('#langBtn').onclick=$('#langBtn2').onclick=()=>applyLang(LANG==='fa'?'en':'fa');
 const lockUI=on=>{document.body.classList.toggle('locked',on);if(on&&V)V.pause()};
-const paintStatus=()=>{const s=t(STK);$('#stt').textContent=s;$('#loginMsg').textContent=STK==='notConnected'?'':s};
+const paintStatus=()=>{const status=t(STK);$('#stt').textContent=status;$('#st').title=chatDetail;$('#loginMsg').textContent=STK==='notConnected'?'':(chatDetail||status);const detail=$('#chatDetail');detail.hidden=!chatDetail;detail.textContent=chatDetail;};
 const setStatus=(k,key)=>{$('#st').className='pill '+k;$('#loginMsg').className='lmsg '+k;STK=key;paintStatus();
  if(key==='connected')lockUI(false);else if(k==='err')lockUI(true)};
 function paintCaps(){$('#capVal').textContent=capLimit>0?`${Math.min(addedCount,capLimit)}/${capLimit}`:'∞';$('#userCapVal').textContent=userCap>0?String(userCap):'∞'}
@@ -695,35 +698,30 @@ async function resolve(it){
  render();if(Q[cur]===it)play(cur,1)}
 const redo=it=>{if(!it||it.t==='story')return;it.bad=[];it.emb=0;it.retried=0;it.noEmb=0;it.via='direct';enqueue(it,true);render();play(cur,1)};
 
-/* ---- Kick connection (single socket, generation-guarded) ---- */
-async function chatId(s){
- if(/^\d+$/.test(s))return +s;
- const c=lsGet('room_'+s);if(c)return +c;
- const ok=x=>/"chatroom"\s*:\s*\{/.test(x);let x;
- try{x=await get('https://kick.com/api/v2/channels/'+encodeURIComponent(s),ok,8000)}
- catch{x=await get('https://kick.com/api/v1/channels/'+encodeURIComponent(s),ok,8000)}
- const id=JSON.parse(x).chatroom.id;if(!id)throw 0;lsSet('room_'+s,id);return id}
-function closeWs(){live=false;clearTimeout(rtT);if(ws){ws.onclose=ws.onerror=ws.onmessage=null;try{ws.close()}catch{}ws=null}}
-async function connect(){
+/* ---- Kick Centrifugo connection; queue scanning and source rules stay in scan(). ---- */
+function closeWs(){live=false;gen++;const old=ws;ws=null;if(old)try{old.close()}catch{}}
+function connect(){
  if(!Object.keys(sourceChecks).some(k=>sourceChecks[k]())){toast(t('sourceRequired'));return}
  const s=$('#ch').value.trim().replace(/^.*kick\.com\//i,'').replace(/[/?#@].*$/,'').toLowerCase();if(!s){$('#ch').focus();return}
- lsSet('kick_ch',s);closeWs();live=true;retry=0;const g=++gen;
- setStatus('wait','finding');
- try{room=await chatId(s)}catch{if(g===gen){live=false;setStatus('err','notFound')}return}
- if(g!==gen)return;open_(g)}
-function open_(g){
- if(!live||g!==gen)return;
- const key=lsGet('pusher_key')||DEF_PUSHER;
- const me=ws=new WebSocket(`wss://ws-us2.pusher.com/app/${key}?protocol=7&client=js&version=8.4.0&flash=false`);
- me.onmessage=e=>{if(ws!==me)return;let d;try{d=JSON.parse(e.data)}catch{return}
-  switch(d.event){
-   case'pusher:connection_established':me.send(JSON.stringify({event:'pusher:subscribe',data:{auth:'',channel:`chatrooms.${room}.v2`}}));break;
-   case'pusher_internal:subscription_succeeded':retry=0;setStatus('on','connected');break;
-   case'pusher:ping':me.send('{"event":"pusher:pong","data":{}}');break;
-   case'pusher:error':{let c;try{c=(typeof d.data==='string'?JSON.parse(d.data):d.data)?.code}catch{}if(c===4001){closeWs();setStatus('err','gatewayClosed')}break}
-   case'App\\Events\\ChatMessageEvent':try{const m=JSON.parse(d.data);scan(m.content||'',m.sender?.username||'?',m.created_at)}catch{}}};
- me.onclose=()=>{if(!live||g!==gen||ws!==me)return;setStatus('wait','disconnected');rtT=setTimeout(()=>open_(g),Math.min(8000,500*2**retry++))};
- me.onerror=()=>{try{me.close()}catch{}}}
+ closeWs();chatDetail='';chatReceived=0;
+ if(!/^[a-z0-9][a-z0-9_-]{0,63}$/.test(s)||/^\d+$/.test(s)){setStatus('err','notFound');return}
+ lsSet('kick_ch',s);live=true;const g=++gen;setStatus('wait','finding');
+ if(!window.KickRealtime){chatDetail=LANG==='fa'?'فایل اتصال چت بارگیری نشد؛ صفحه را دوباره بارگیری کن.':'Chat client did not load; reload the page.';setStatus('err','disconnected');live=false;return}
+ const ids=new Set();
+ ws=window.KickRealtime.connect({channel:s,
+  onState(state,message){if(!live||g!==gen)return;
+   if(state==='connected'){chatDetail=LANG==='fa'?'چت متصل است · '+chatReceived+' پیام دریافت شده':'Chat connected · '+chatReceived+' messages received';setStatus('on','connected')}
+   else if(state==='connecting'){if(!chatDetail)chatDetail=message;setStatus('wait','finding')}
+   else{chatDetail=message;setStatus('wait','disconnected')}
+  },
+  onMessage(message){if(!live||g!==gen)return;
+   if(message.id!=null){const id=String(message.id);if(ids.has(id))return;ids.add(id);if(ids.size>1500)ids.delete(ids.values().next().value)}
+   chatReceived++;chatDetail=LANG==='fa'?chatReceived+' پیام دریافت شده':chatReceived+' messages received';paintStatus();
+   scan(message.content,message.username||'?',message.time);
+  }
+ });
+}
+window.addEventListener('pagehide',closeWs);
 
 /* ---- queue list ---- */
 function syncDataWindow(){
@@ -928,9 +926,9 @@ $('#dataSaverBtn').onclick=()=>{dataSaver=!dataSaver;lsSet('data_saver',dataSave
 $('#userCapBtn').onclick=()=>{const v=prompt(t('userCapPrompt'),userCap>0?String(userCap):'');closeMenu();if(v===null)return;
  const n=parseInt(v.trim(),10);userCap=(Number.isFinite(n)&&n>0)?n:0;lsSet('cap_peruser',String(userCap));
  toast(userCap>0?t('userCapSet')(userCap):t('userCapCleared'));paintCaps()};
-const setPk=()=>{const v=prompt(t('pusherPrompt'),lsGet('pusher_key')||'');closeMenu();if(v===null)return;lsSet('pusher_key',v.trim());if($('#ch').value.trim())connect()};
-$('#pk').onclick=setPk;$('#pk2').onclick=setPk;
-$('#chg').onclick=()=>{closeMenu();closeWs();setStatus('','notConnected');lockUI(true);$('#ch').focus()};
+const reconnectChat=()=>{closeMenu();if($('#ch').value.trim())connect()};
+$('#pk').onclick=$('#pk2').onclick=reconnectChat;
+$('#chg').onclick=()=>{closeMenu();closeWs();chatDetail='';setStatus('','notConnected');lockUI(true);$('#ch').focus()};
 $('#go').onclick=connect;$('#ch').onkeydown=e=>{if(e.key==='Enter')connect()};
 for(const [k,sel] of Object.entries({instagram:'#srcInstagram',youtube:'#srcYoutube',tiktok:'#srcTiktok'}))$(sel).onchange=()=>{sources[k]=$(sel).checked;saveSources()};
 
