@@ -12,11 +12,11 @@
 
 ---
 
-instaQ is a single-file web app that connects to a [Kick](https://kick.com) chat, picks out every Instagram link viewers post, and plays the videos one after another in a full-height player. No build step, no server, no dependencies: just one HTML file.
+instaQ connects to [Kick](https://kick.com) chat and queues Instagram, YouTube and TikTok links using the existing source filters and playback rules. The static app uses `instaQ.html` and `kick-realtime.js`; a small Cloudflare Worker handles public Centrifugo chat tokens and WebSocket relay. No build step or npm dependencies are required.
 
 ## Features
 
-- **Login screen** — enter a channel name or a numeric chatroom ID; once connected you land on the main page (the channel and chatroom ID are not shown there).
+- **Login screen** — enter a channel name or Kick channel URL; once connected you land on the main page (the channel and chatroom ID are not shown there).
 - **Automatic link detection** — Reels, posts, IGTV and `/share/` links, with or without `https://`. Duplicates are skipped. Stories can't be played in-page, so they get an "Open in Instagram" button.
 - **Ordered queue** — links play in the order they were sent; the queue holds up to 150 items and is saved in the browser, so it survives a refresh.
 - **Direct video playback** — several mirrors and Instagram's embed are tried in parallel, the first working source wins, and failed items retry once automatically. If nothing works, the page falls back to Instagram's own embedded player.
@@ -29,13 +29,13 @@ instaQ is a single-file web app that connects to a [Kick](https://kick.com) chat
 
 ## Usage
 
-1. [Open instaQ online](https://ahmadramzy1.github.io/instaQ/) in a modern browser, or download `instaQ.html` and open it locally.
-2. Type the Kick channel name (or chatroom ID) and press **Connect**.
+1. [Open instaQ online](https://ahmadramzy1.github.io/instaQ/) in a modern browser, or host the app on the HTTPS origin configured in your Worker.
+2. Type the Kick channel name or URL and press **Connect**.
 3. Links that appear in chat start playing automatically.
 
 ### OBS and direct channel links
 
-Add `?c=CHANNEL_NAME` to the URL to connect to a channel automatically, for example `https://ahmadramzy1.github.io/instaQ/instaQ.html?c=CHANNEL_NAME`. Replace `CHANNEL_NAME` with the Kick channel name or numeric chatroom ID. Use this URL as an OBS Browser Source. The short `/instaQ/` URL also preserves the channel parameter when redirecting.
+Add `?c=CHANNEL_NAME` to the URL to connect to a channel automatically, for example `https://ahmadramzy1.github.io/instaQ/instaQ.html?c=CHANNEL_NAME`. Replace `CHANNEL_NAME` with the Kick channel slug. Use this URL as an OBS Browser Source. The short `/instaQ/` URL also preserves the channel parameter when redirecting.
 
 ### Browser storage
 
@@ -67,18 +67,28 @@ GitHub Pages is already enabled for this repository. In **Settings → Pages**, 
 
 ## Settings
 
-The ⚙ menu has **Change channel**, **Clear watched** and **Clear entire list**. A custom video resolver URL (`{t}` = type, `{c}` = post code) and a custom Pusher app key are still supported in the code but their buttons are hidden; the Pusher key link on the login screen stays available.
+The ⚙ menu includes **Reconnect chat**, **Change channel**, **Clear watched** and **Clear entire list**. The login screen also offers reconnect. Source selections, intake limits, per-user limits, Data Saver and queue storage are preserved.
 
 ## How it works
 
-- The channel name is resolved to a chatroom ID through Kick's public API (via CORS proxies) and cached locally.
-- Chat messages arrive over a Pusher WebSocket subscribed to `chatrooms.<id>.v2`, with automatic reconnect and backoff.
-- Instagram links are matched with a regular expression, then resolved to a direct video URL through public mirrors and the Instagram embed page.
-- Everything runs client-side; settings and the queue live in `localStorage`.
+- A standalone Worker resolves the channel slug and requests Kick's current Centrifugo connection descriptor and an anonymous connection token.
+- The browser connects through the Worker's restricted WebSocket relay and subscribes to `chatrooms.<roomId>.v2`.
+- `ChatMessageEvent` publications are normalized and passed to the existing `scan()` function; Instagram, YouTube, TikTok, vt and vm parsing remains unchanged.
+- Heartbeats, token refresh and reconnect are handled by `kick-realtime.js`. Message IDs are deduplicated in the app.
+- The player, queue and settings stay in the browser. A temporary chat disconnect does not clear or lock an existing queue.
+
+## Deploy the chat Worker
+
+1. Create a Cloudflare Worker named `instaq-chat` and deploy `worker/worker.mjs`.
+2. Set the Text variable `SITE_ORIGIN` to `https://ahmadramzy1.github.io` (or your own app origin, without a path or trailing slash). No secrets or bindings are required.
+3. Set the `worker` URL in `kick-realtime.js` to your deployed URL. This deployment uses `https://instaq-chat.ahmadamj79.workers.dev`.
+4. Check `/health`, then connect using a channel slug or Kick URL. Numeric chatroom IDs and local file origins are not supported by this gateway.
+
+[Developer guide with complete code](docs/kick-chat-guide.html)
 
 ## Known limitations
 
 - It relies on third-party services (Kick's API, CORS proxies, Instagram mirrors). If one of them changes or goes down, resolving can fail — try the retry button or the Instagram player fallback.
-- If Kick closes the chat gateway (error `4001`), the Pusher key has probably changed; set a new one from the login screen.
+- Kick website realtime endpoints are internal and may change. The UI displays connection errors and received-message counts; use reconnect after resolving network or gateway errors.
 - Depending on your network, a VPN may be needed for some sources.
 - Stories can't be played in the page.
