@@ -1,0 +1,177 @@
+<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>راهنمای جدید چت Kick — Centrifugo</title><style>
+:root{color-scheme:dark;--bg:#0c111b;--card:#151e2e;--line:#2b3b52;--text:#e5edf7;--muted:#aabbd0;--accent:#b8ef72}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/2 Tahoma,Arial,sans-serif}main{max-width:1040px;margin:auto;padding:36px 22px 70px}header{padding:30px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(125deg,#203347,#14211e)}h1{font-size:clamp(25px,4vw,38px);line-height:1.6;margin:8px 0 14px}h2{font-size:24px;margin:0 0 12px}h3{font-size:18px}p{margin:10px 0}a{color:var(--accent)}.eyebrow{font:700 12px/2 Arial,sans-serif;letter-spacing:2px;color:var(--accent);direction:ltr;text-align:right}.muted,small{color:var(--muted)}section{margin-top:22px;padding:26px;border:1px solid var(--line);border-radius:18px;background:var(--card)}nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}nav a{border:1px solid var(--line);padding:5px 12px;border-radius:9px;text-decoration:none}.note{border-right:3px solid var(--accent);padding:10px 16px;background:#b8ef720b;margin:15px 0}.flow{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.flow span{border:1px solid #45613d;padding:7px 12px;border-radius:9px;background:#b8ef7208}.flow b{color:var(--accent)}code{font-family:Consolas,monospace;direction:ltr;unicode-bidi:embed;font-size:.92em}pre{direction:ltr;text-align:left;overflow:auto;margin:0;padding:20px;background:#080e17;border:1px solid var(--line);border-radius:0 0 12px 12px;line-height:1.65;tab-size:2}pre code{unicode-bidi:normal;white-space:pre;font-size:13px}.code-head{display:flex;justify-content:space-between;align-items:center;background:#1d2a3b;padding:8px 14px;border-radius:12px 12px 0 0;direction:ltr;font:13px Arial,sans-serif}.code-head button,header button{border:1px solid #628342;border-radius:8px;background:#b8ef72;color:#132008;padding:8px 14px;cursor:pointer;font:13px Tahoma,sans-serif}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:600px}th,td{text-align:right;padding:12px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--accent)}li{margin:8px 0}footer{margin-top:24px;color:var(--muted);font-size:13px}.tag{color:var(--accent)}@media(max-width:600px){main{padding:18px 12px 40px}section,header{padding:20px 16px}h2{font-size:21px}}@media print{ :root{color-scheme:light}body{background:white;color:#111}header,section{background:white;border-color:#bbb;box-shadow:none}a,.tag,h2,.eyebrow{color:#245a21}.muted,small,footer{color:#444}nav,button{display:none!important}pre{background:#f4f4f4;color:#111;white-space:pre-wrap;overflow:visible}pre code{white-space:pre-wrap;overflow-wrap:anywhere}.code-head{background:#eee;color:#111}.note{background:#fafafa}section{break-inside:auto}h2,h3{break-after:avoid}}
+</style></head><body><main><header><div class="eyebrow">KICK CHAT / CENTRIFUGO / DEVELOPER GUIDE</div><h1>روش جدید دریافت چت Kick</h1><p>راهنمای پیاده‌سازی برای برنامه‌نویس، همراه با Worker مستقل و کلاینت کامل مرورگر؛ همان ساختار اتصال استفاده‌شده در ChatBattle و instaQ.</p><p class="muted">به‌روزرسانی: ۱۳ اکتبر ۲۰۲۶. فایل مستقل و آفلاین است؛ نمونه‌کدها با بازشدن این راهنما اجرا نمی‌شوند.</p><button onclick="window.print()">چاپ / ذخیره PDF</button></header>
+<nav><a href="#architecture">معماری</a><a href="#setup">راه‌اندازی Worker</a><a href="#protocol">پروتکل</a><a href="#integration">ادغام</a><a href="#client">کلاینت کامل</a><a href="#worker">Worker کامل</a><a href="#debug">عیب‌یابی</a></nav>
+<section id="architecture"><h2>۱. چه چیزی تغییر کرده؟</h2><p>اتصال قدیمی با کلید ثابت Pusher دیگر مبنای این پیاده‌سازی نیست. سایت Kick اکنون descriptor اتصال را ارائه می‌کند؛ در بررسی زنده، provider آن <code>centrifugo</code> بود. کلاینت باید توکن موقت بگیرد و با پروتکل Centrifugo به کانال چت Subscribe کند.</p><div class="flow"><span>مرورگر برنامه</span><b>←</b><span>Worker: bootstrap و token</span><b>←</b><span>API عمومی سایت Kick</span></div><div class="flow" style="margin-top:12px"><span>مرورگر</span><b>↔</b><span>Worker: WebSocket relay</span><b>↔</b><span>Centrifugo در Kick</span></div><p>در بررسی از دامنهٔ برنامه، درخواست مستقیم مرورگر برای توکن با CORS شکست خورد و WebSocket مستقیم نیز خطای شبکه داد. Worker هر دو مسیر را واسطه‌گری می‌کند. APIهای داخلی سایت Kick قرارداد رسمی پایدار ندارند؛ آدرس سرور از descriptor گرفته می‌شود و به یک region ثابت وابسته نیستیم.</p><p>این مسیر برای خواندن چت عمومی از توکن اتصال ناشناس استفاده می‌کند. Firebase، Client Secret و ورود OAuth برای این Worker مستقل لازم نیستند. این توکن اجازهٔ ارسال پیام به چت Kick را در این نمونه فراهم نمی‌کند.</p></section>
+<section id="setup"><h2>۲. تنظیمات Worker مستقل</h2><div class="table-wrap"><table><tr><th>تنظیم</th><th>مقدار در instaQ</th></tr><tr><td>نام Worker</td><td><code>instaq-chat</code></td></tr><tr><td>نوع پروژه</td><td>Cloudflare Worker با ساختار ES Module و <code>export default</code></td></tr><tr><td>متغیر Text</td><td><code>SITE_ORIGIN = https://ahmadramzy1.github.io</code></td></tr><tr><td>Secret و Binding</td><td>لازم نیست</td></tr><tr><td>آدرس مورد انتظار کلاینت</td><td><code>https://instaq-chat.ahmadamj79.workers.dev</code></td></tr></table></div><ol><li>Worker را بساز، کد کامل بخش پایین را جای Hello World قرار بده و Deploy کن.</li><li>در Settings → Variables and Secrets متغیر <code>SITE_ORIGIN</code> را با نوع Text ثبت و Deploy کن.</li><li>آدرس <code>/health</code> باید <code>{"ok":true,"version":"centrifugo-1"}</code> برگرداند؛ این فقط نسخهٔ کد را تأیید می‌کند، نه دریافت پیام واقعی.</li><li>در فایل کلاینت، مقدار ثابت <code>worker</code> را برابر آدرس Worker خودت قرار بده.</li></ol><div class="note">برای پروژهٔ دیگر، SITE_ORIGIN باید origin واقعی همان برنامه باشد؛ مثلاً <code>https://your-app.example</code>. مسیر صفحه مانند <code>/instaQ/</code> یا slash انتهایی به آن اضافه نکن. Worker این پروژه درخواست دامنه‌های دیگر را قبول نمی‌کند؛ برنامه‌نویس دیگر باید Worker خودش را بسازد.</div></section>
+<section><h2>۳. قرارداد HTTP بین مرورگر و Worker</h2><div class="table-wrap"><table><tr><th>مسیر</th><th>ورودی</th><th>خروجی / کار</th></tr><tr><td><code>POST /chat/bootstrap</code></td><td><code>{channel, clientId}</code></td><td><code>{provider, url, token, channelId, roomId}</code></td></tr><tr><td><code>POST /chat/token</code></td><td><code>{clientId}</code></td><td><code>{token}</code> برای تمدید</td></tr><tr><td><code>GET /chat/socket?host=...</code></td><td>درخواست Upgrade: websocket</td><td>relay به host تأییدشدهٔ Kick</td></tr><tr><td><code>GET /health</code></td><td>ندارد</td><td>نسخهٔ کد Worker</td></tr></table></div><p><code>clientId</code> با <code>crypto.randomUUID()</code> ساخته می‌شود و در اتصال مجدد همان کلاینت ثابت می‌ماند؛ شناسهٔ کاربر Kick نیست.</p><p>Worker ابتدا از <code>https://kick.com/api/v2/channels/{slug}</code> دو شناسهٔ متفاوت می‌گیرد: <strong>channelId</strong> از فیلد <code>id</code> و <strong>roomId</strong> از <code>chatroom.id</code>. سپس descriptor از <code>POST https://web.kick.com/api/v1/realtime/channels/{channelId}/chat/connection</code> و توکن از <code>POST https://web.kick.com/api/v1/realtime/auth/connection</code> دریافت می‌شود.</p><p>نام کانال یا URL آن را وارد کن. در این نسخه ورودی عددی chatroom ID به‌تنهایی پشتیبانی نمی‌شود.</p></section>
+<section id="protocol"><h2>۴. پروتکل WebSocket</h2><ol><li>مرورگر به مسیر WebSocket در Worker وصل می‌شود؛ Worker فقط hostهای <code>realtime.*.platform.kick.com</code> را می‌پذیرد و مقصد آن ثابتاً <code>/connection/websocket</code> است.</li><li>فرمان اتصال: <code>{id:1, connect:{token, name:"js"}}</code>.</li><li>بعد از پاسخ connect، فرمان عضویت: <code>{id:2, subscribe:{channel:"chatrooms.ROOM_ID.v2"}}</code>.</li><li>فقط بعد از پاسخ subscribe وضعیت «متصل» نشان داده می‌شود. این وضعیت به‌تنهایی ثابت نمی‌کند پیام دریافت شده؛ یک پیام جدید باید به callback برسد.</li><li>پیام‌ها از <code>push.pub.data</code> می‌آیند. event باید به <code>ChatMessageEvent</code> ختم شود. data داخلی ممکن است رشتهٔ JSON باشد و باید دوباره Parse شود.</li></ol><div class="code-head"><span>JavaScript / JSON</span><button data-copy="payload">کپی کد</button></div><pre><code id="payload">{
+  &quot;push&quot;: {
+    &quot;channel&quot;: &quot;chatrooms.12871361.v2&quot;,
+    &quot;pub&quot;: {
+      &quot;data&quot;: {
+        &quot;event&quot;: &quot;App\\Events\\ChatMessageEvent&quot;,
+        &quot;data&quot;: &quot;{\&quot;id\&quot;:\&quot;message-id\&quot;,\&quot;content\&quot;:\&quot;https://vt.tiktok.com/example/\&quot;,\&quot;sender\&quot;:{\&quot;id\&quot;:42,\&quot;username\&quot;:\&quot;viewer\&quot;}}&quot;
+      }
+    }
+  }
+}</code></pre><p>یک فریم می‌تواند چند JSON مستقل داشته باشد که با newline جدا شده‌اند؛ کلاینت فریم را با <code>split("\n")</code> به بسته‌ها تقسیم می‌کند.</p><h3>نگه‌داشتن اتصال</h3><ul><li>پاسخ connect، مقادیر <code>ping</code> و <code>pong</code> را اعلام می‌کند. پیام خالی <code>{}</code> heartbeat است؛ در صورت درخواست سرور با <code>{}</code> پاسخ داده می‌شود.</li><li>اگر تا interval به‌علاوهٔ مهلت اضافه هیچ فریمی نرسد، اتصال دوباره برقرار می‌شود.</li><li>اگر <code>expires</code> فعال باشد، با استفاده از <code>ttl</code>، توکن قبل از انقضا گرفته و فرمان <code>refresh</code> ارسال می‌شود.</li><li>Reconnect با backoff و jitter انجام می‌شود؛ هر بار bootstrap و Subscribe مجدد انجام می‌شود. تاریخچهٔ پیام‌های ازدست‌رفته در این نمونه بازیابی نمی‌شود.</li><li>هنگام stop، تایمرها، درخواست‌های fetch و سوکت پاک می‌شوند؛ شمارهٔ generation جلوی callbackهای اتصال قبلی را می‌گیرد.</li></ul></section>
+<section id="integration"><h2>۵. اتصال به منطق برنامه</h2><div class="code-head"><span>JavaScript / JSON</span><button data-copy="integration-code">کپی کد</button></div><pre><code id="integration-code">// Load kick-realtime.js before this code.
+let feed = KickRealtime.connect({
+  channel: &quot;ahmad-ramzy&quot;, // channel slug, not numeric chatroom ID
+  onState(state, message) {
+    // state: connecting | connected | disconnected
+    const status = document.querySelector(&quot;#status&quot;);
+    if (status) status.textContent = message;
+  },
+  onMessage(message) {
+    // {content, username, id, time, kickId}
+    console.log(message.content);
+    // instaQ uses its existing parser and queue rules:
+    // scan(message.content, message.username, message.time);
+  }
+});
+
+// Before switching channels, stop the previous connection:
+// feed.close();
+window.addEventListener(&quot;pagehide&quot;, () =&gt; feed.close());</code></pre><p>در instaQ، تابع <code>scan(content, username, time)</code> بدون تغییر در parser اصلی، لینک را وارد صف می‌کند. شناسایی Instagram، YouTube و TikTok، از جمله <code>vt</code> و <code>vm</code>، به همان تنظیمات انتخاب منابع وابسته است؛ منبع غیرفعال عمداً وارد صف نمی‌شود.</p><p>محدودیت کل ورودی، سقف هر کاربر، Data Saver، سابقهٔ دیده‌شده‌ها و کنترل پخش در لایهٔ برنامه باقی مانده‌اند. برای جلوگیری از پردازش تکراری، instaQ حداکثر ۱۵۰۰ شناسهٔ پیام اخیر را نگه می‌دارد. پیام بدون ID همچنان از قواعد جلوگیری از لینک تکراری در scan عبور می‌کند.</p><p>برای یکتایی حساب از <code>kickId</code> استفاده کن؛ <code>username</code> برای نمایش مناسب است. متن چت را با <code>textContent</code> نمایش بده و توکن موقت را در لاگ یا localStorage ذخیره نکن. کلاینت پایین توکن را در حافظهٔ همان اتصال نگه می‌دارد.</p></section>
+<section id="client"><h2>۶. فایل کامل kick-realtime.js</h2><p>بدون کتابخانهٔ خارجی اجرا می‌شود. آدرس ثابت Worker در ابتدای این کد را برای پروژهٔ خودت تغییر بده. این کد در راهنما اجرا نمی‌شود؛ آن را در فایل جداگانه ذخیره کن.</p><div class="code-head"><span>JavaScript / JSON</span><button data-copy="client-code">کپی کد</button></div><pre><code id="client-code">// Anonymous public chat. Native Centrifugo JSON protocol; no OAuth or Pusher key.
+(()=&gt;{
+ const worker=&#x27;https://instaq-chat.ahmadamj79.workers.dev&#x27;;
+ function connect({channel,onState=()=&gt;{},onMessage=()=&gt;{}}){
+  const clientId=crypto.randomUUID();let stopped=false,socket=null,controller=null,attempt=0,generation=0,retryTimer,heartbeatTimer,refreshTimer,deadlineTimer;
+  let commandId=0,pingMs=35000,needsPong=false,roomChannel=&#x27;&#x27;,commands=new Map();
+  const emit=(state,message)=&gt;{if(!stopped)onState(state,message);};
+  const clearTimers=()=&gt;{clearTimeout(heartbeatTimer);clearTimeout(refreshTimer);clearTimeout(deadlineTimer);};
+  async function api(path,body,signal){
+   let response;try{response=await fetch(worker+path,{method:&#x27;POST&#x27;,headers:{&#x27;Content-Type&#x27;:&#x27;application/json&#x27;},body:JSON.stringify(body),signal});}catch(error){throw Error(&#x27;دسترسی به Worker ناموفق است؛ شبکه یا CORS: &#x27;+error.message);}
+   let data;try{data=await response.json();}catch{throw Error(&#x27;پاسخ سرویس چت معتبر نیست.&#x27;);}
+   if(!response.ok)throw Error(response.status===404?&#x27;Worker چت هنوز به نسخهٔ جدید ارتقا پیدا نکرده است.&#x27;:data.error||&#x27;خطای سرویس چت &#x27;+response.status);
+   return data;
+  }
+  function retry(token,message){
+   if(stopped||token!==generation)return;generation++;clearTimers();controller?.abort();commands.clear();
+   const old=socket;socket=null;if(old){old.onopen=old.onmessage=old.onclose=old.onerror=null;try{old.close();}catch{}}
+   emit(&#x27;disconnected&#x27;,message||&#x27;اتصال قطع شد؛ تلاش دوباره…&#x27;);
+   clearTimeout(retryTimer);retryTimer=setTimeout(start,Math.min(15000,800*2**Math.min(attempt++,4))+Math.random()*400);
+  }
+  async function start(){
+   if(stopped)return;const token=++generation;controller?.abort();controller=new AbortController();const signal=controller.signal;
+   emit(&#x27;connecting&#x27;,&#x27;در حال اتصال به چت Kick…&#x27;);
+   deadlineTimer=setTimeout(()=&gt;retry(token,&#x27;دریافت اتصال چت بیش از حد طول کشید.&#x27;),40000);
+   try{
+    const config=await api(&#x27;/chat/bootstrap&#x27;,{channel,clientId},signal);if(stopped||token!==generation)return;
+    if(config.provider!==&#x27;centrifugo&#x27;||!Number.isSafeInteger(config.roomId)||config.roomId&lt;=0)throw Error(&#x27;تنظیمات اتصال چت نامعتبر است.&#x27;);
+    const url=new URL(config.url);if(url.protocol!==&#x27;wss:&#x27;||!url.hostname.endsWith(&#x27;.platform.kick.com&#x27;))throw Error(&#x27;آدرس اتصال چت نامعتبر است.&#x27;);
+    roomChannel=&#x27;chatrooms.&#x27;+config.roomId+&#x27;.v2&#x27;;commands=new Map();commandId=0;
+    const relay=new URL(worker+&#x27;/chat/socket&#x27;);relay.protocol=&#x27;wss:&#x27;;relay.searchParams.set(&#x27;host&#x27;,url.hostname);
+    const ws=new WebSocket(relay.href);socket=ws;
+    const current=()=&gt;!stopped&amp;&amp;token===generation&amp;&amp;socket===ws;
+    const send=(type,data,callback)=&gt;{if(!current()||ws.readyState!==WebSocket.OPEN)return;const id=++commandId;commands.set(id,callback);ws.send(JSON.stringify({id,[type]:data}));};
+    const alive=()=&gt;{clearTimeout(heartbeatTimer);heartbeatTimer=setTimeout(()=&gt;retry(token,&#x27;چت پاسخ نمی‌دهد؛ اتصال دوباره…&#x27;),pingMs);};
+    function renew(result){
+     clearTimeout(refreshTimer);if(!result.expires||!Number.isFinite(result.ttl))return;
+     refreshTimer=setTimeout(async()=&gt;{try{const auth=await api(&#x27;/chat/token&#x27;,{clientId},signal);if(current())send(&#x27;refresh&#x27;,{token:auth.token},renew);}catch(error){if(current())retry(token,error.message);}},Math.max(1000,(result.ttl-20)*1000));
+    }
+    function publication(pub){
+     let envelope=pub?.data;if(typeof envelope===&#x27;string&#x27;)try{envelope=JSON.parse(envelope);}catch{return;}
+     if(!envelope?.event?.endsWith(&#x27;ChatMessageEvent&#x27;))return;
+     let data=envelope.data;if(typeof data===&#x27;string&#x27;)try{data=JSON.parse(data);}catch{return;}
+     if(typeof data?.content!==&#x27;string&#x27;)return;
+     onMessage({content:data.content,username:String(data.sender?.username||data.sender?.slug||data.sender?.id||&#x27;&#x27;),id:data.id??data.message_id,time:data.created_at,kickId:data.sender?.id});
+    }
+    ws.onopen=()=&gt;{if(current())send(&#x27;connect&#x27;,{token:config.token,name:&#x27;js&#x27;},result=&gt;{
+     needsPong=!!result.pong;pingMs=result.ping&gt;0?(result.ping+10)*1000:45000;alive();renew(result);
+     send(&#x27;subscribe&#x27;,{channel:roomChannel},()=&gt;{clearTimeout(deadlineTimer);attempt=0;emit(&#x27;connected&#x27;,&#x27;Kick Live&#x27;);});
+    });};
+    ws.onmessage=event=&gt;{
+     if(!current())return;alive();
+     for(const line of String(event.data).trim().split(&#x27;\n&#x27;)){
+      let reply;try{reply=JSON.parse(line);}catch{continue;}
+      if(!Object.keys(reply).length){if(needsPong)ws.send(&#x27;{}&#x27;);continue;}
+      if(reply.id){const callback=commands.get(reply.id);commands.delete(reply.id);if(reply.error){retry(token,&#x27;خطای چت &#x27;+reply.error.code+&#x27;: &#x27;+reply.error.message);return;}const value=reply.connect||reply.subscribe||reply.refresh;if(callback&amp;&amp;value)callback(value);}
+      else if(reply.push){const push=reply.push;if(push.disconnect||push.unsubscribe&amp;&amp;push.channel===roomChannel){retry(token,&#x27;اتصال چت نیاز به تمدید دارد.&#x27;);return;}if(push.channel===roomChannel&amp;&amp;push.pub)publication(push.pub);}
+     }
+    };
+    ws.onerror=()=&gt;{if(current())retry(token,&#x27;اتصال WebSocket روی Worker برقرار نشد (&#x27;+url.hostname+&#x27;). شبکه یا محدودیت مرورگر را بررسی کن.&#x27;);};
+    ws.onclose=event=&gt;{if(current())retry(token,&#x27;اتصال چت قطع شد (&#x27;+event.code+&#x27;).&#x27;);};
+   }catch(error){if(!stopped&amp;&amp;token===generation)retry(token,error.message);}
+  }
+  start();
+  return {close(){if(stopped)return;stopped=true;generation++;clearTimeout(retryTimer);clearTimers();controller?.abort();commands.clear();if(socket){socket.onopen=socket.onmessage=socket.onerror=socket.onclose=null;try{socket.close();}catch{}socket=null;}}};
+ }
+ window.KickRealtime={connect};
+})();
+</code></pre></section>
+<section id="worker"><h2>۷. کد کامل Worker مستقل</h2><p>این نسخه فقط دروازهٔ چت است و کد احراز هویت و Firebase در آن وجود ندارد. کد را تماماً جایگزین فایل Worker کن. محدودیت origin، اعتبارسنجی ورودی، timeout و محدودکردن مقصد relay در همین فایل هستند. بررسی origin جای احراز هویت برای اطلاعات خصوصی را نمی‌گیرد؛ این Worker برای چت عمومی طراحی شده است.</p><div class="code-head"><span>JavaScript / JSON</span><button data-copy="worker-code">کپی کد</button></div><pre><code id="worker-code">// instaQ public Kick chat gateway — Cloudflare Workers Free. No secrets or bindings.
+async function readBody(request){
+  if(!request.headers.get(&#x27;content-type&#x27;)?.startsWith(&#x27;application/json&#x27;))throw Error(&#x27;content type&#x27;);
+  const reader=request.body?.getReader();if(!reader)throw Error(&#x27;body&#x27;);
+  let size=0;const chunks=[];
+  try{while(true){const {value,done}=await reader.read();if(done)break;size+=value.byteLength;if(size&gt;8192){await reader.cancel();throw Error(&#x27;body too large&#x27;)}chunks.push(value);}}
+  finally{reader.releaseLock()}
+  const bytes=new Uint8Array(size);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length}
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+const chatRooms=new Map();
+async function chatUpstream(path,body){
+ const response=await fetch(&#x27;https://web.kick.com/api/v1/realtime/&#x27;+path,{method:&#x27;POST&#x27;,headers:{&#x27;Content-Type&#x27;:&#x27;application/json&#x27;,Accept:&#x27;application/json&#x27;,Origin:&#x27;https://kick.com&#x27;,Referer:&#x27;https://kick.com/&#x27;,&#x27;User-Agent&#x27;:&#x27;Mozilla/5.0&#x27;},body:JSON.stringify(body),signal:AbortSignal.timeout(10000)});
+ if(!response.ok)throw Error(&#x27;Kick realtime HTTP &#x27;+response.status);
+ return (await response.json()).data;
+}
+async function publicChat(path,body){
+ const clientId=body.clientId;
+ if(typeof clientId!==&#x27;string&#x27;||!/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(clientId))throw Error(&#x27;Invalid clientId&#x27;);
+ if(path===&#x27;/chat/token&#x27;){
+  const data=await chatUpstream(&#x27;auth/connection&#x27;,{client_id:clientId});if(typeof data?.token!==&#x27;string&#x27;)throw Error(&#x27;Missing connection token&#x27;);return {token:data.token};
+ }
+ const channel=String(body.channel||&#x27;&#x27;).toLowerCase();
+ if(!/^[a-z0-9][a-z0-9_-]{0,63}$/.test(channel)||/^\d+$/.test(channel))throw Error(&#x27;نام کانال Kick را وارد کن، نه شناسهٔ عددی چت.&#x27;);
+ let room=chatRooms.get(channel);
+ if(!room||room.until&lt;Date.now()){
+  const response=await fetch(&#x27;https://kick.com/api/v2/channels/&#x27;+encodeURIComponent(channel),{headers:{Accept:&#x27;application/json&#x27;,&#x27;User-Agent&#x27;:&#x27;Mozilla/5.0&#x27;,Referer:&#x27;https://kick.com/&#x27;},signal:AbortSignal.timeout(10000)});
+  if(!response.ok)throw Error(&#x27;Kick channel HTTP &#x27;+response.status);
+  const data=await response.json(),channelId=Number(data?.id),roomId=Number(data?.chatroom?.id);
+  if(!Number.isSafeInteger(channelId)||channelId&lt;=0||!Number.isSafeInteger(roomId)||roomId&lt;=0)throw Error(&#x27;Channel or chatroom ID missing&#x27;);
+  room={channelId,roomId,until:Date.now()+300000};chatRooms.set(channel,room);if(chatRooms.size&gt;100)chatRooms.delete(chatRooms.keys().next().value);
+ }
+ const descriptor=await chatUpstream(&#x27;channels/&#x27;+room.channelId+&#x27;/chat/connection&#x27;,{client:{id:clientId,type:&#x27;web&#x27;},capabilities:{accepted_providers:[{provider:&#x27;centrifugo&#x27;}]}});
+ const url=descriptor?.connections?.find(c=&gt;c.provider===&#x27;centrifugo&#x27;)?.credentials?.url;
+ const parsed=new URL(url);
+ if(parsed.protocol!==&#x27;wss:&#x27;||!parsed.hostname.endsWith(&#x27;.platform.kick.com&#x27;)||parsed.username||parsed.password)throw Error(&#x27;Unsupported Kick realtime provider&#x27;);
+ const auth=await chatUpstream(&#x27;auth/connection&#x27;,{client_id:clientId});if(typeof auth?.token!==&#x27;string&#x27;)throw Error(&#x27;Missing connection token&#x27;);
+ return {provider:&#x27;centrifugo&#x27;,url:parsed.href,token:auth.token,channelId:room.channelId,roomId:room.roomId};
+}
+export default {
+ async fetch(request,env){
+  const headers={&#x27;Cache-Control&#x27;:&#x27;no-store&#x27;,&#x27;Vary&#x27;:&#x27;Origin&#x27;,&#x27;Content-Type&#x27;:&#x27;application/json; charset=utf-8&#x27;};
+  const reply=(status,data)=&gt;new Response(JSON.stringify(data),{status,headers});
+  if(request.method===&#x27;GET&#x27;&amp;&amp;new URL(request.url).pathname===&#x27;/health&#x27;)return reply(200,{ok:true,version:&#x27;centrifugo-1&#x27;});
+  if(!env.SITE_ORIGIN||request.headers.get(&#x27;Origin&#x27;)!==env.SITE_ORIGIN)return reply(403,{error:&#x27;Origin not allowed&#x27;});
+  headers[&#x27;Access-Control-Allow-Origin&#x27;]=env.SITE_ORIGIN;
+  headers[&#x27;Access-Control-Allow-Methods&#x27;]=&#x27;POST, OPTIONS&#x27;;headers[&#x27;Access-Control-Allow-Headers&#x27;]=&#x27;Content-Type&#x27;;
+  if(request.method===&#x27;OPTIONS&#x27;)return new Response(null,{status:204,headers});
+  if(new URL(request.url).pathname===&#x27;/chat/socket&#x27;){
+   if(request.method!==&#x27;GET&#x27;||request.headers.get(&#x27;Upgrade&#x27;)?.toLowerCase()!==&#x27;websocket&#x27;)return reply(426,{error:&#x27;WebSocket upgrade required&#x27;});
+   const host=new URL(request.url).searchParams.get(&#x27;host&#x27;);
+   if(!/^realtime\.[a-z0-9-]+\.platform\.kick\.com$/.test(host||&#x27;&#x27;))return reply(400,{error:&#x27;Invalid Kick realtime host&#x27;});
+   try{
+    const upstream=await fetch(&#x27;https://&#x27;+host+&#x27;/connection/websocket&#x27;,{headers:{Upgrade:&#x27;websocket&#x27;,Origin:&#x27;https://kick.com&#x27;,&#x27;User-Agent&#x27;:&#x27;Mozilla/5.0&#x27;}});
+    if(!upstream.webSocket)return reply(502,{error:&#x27;Kick WebSocket upgrade failed&#x27;});
+    // Return the upgrade directly: Cloudflare relays frames without per-message JS execution.
+    return upstream;
+   }catch{return reply(502,{error:&#x27;Kick WebSocket unavailable&#x27;});}
+  }
+  if(request.method!==&#x27;POST&#x27;)return reply(405,{error:&#x27;Method not allowed&#x27;});
+  const chatPath=new URL(request.url).pathname;
+  if([&#x27;/chat/bootstrap&#x27;,&#x27;/chat/token&#x27;].includes(chatPath)){
+   try{return reply(200,await publicChat(chatPath,await readBody(request)));}
+   catch(error){return reply(502,{error:&#x27;اتصال چت Kick ناموفق بود: &#x27;+String(error.message||&#x27;upstream error&#x27;).slice(0,150)});}
+  }
+  return reply(404,{error:&#x27;Not found&#x27;});
+ }
+};
+</code></pre></section>
+<section id="debug"><h2>۸. عیب‌یابی</h2><div class="table-wrap"><table><tr><th>علامت</th><th>بررسی</th></tr><tr><td>403 از Worker</td><td>SITE_ORIGIN باید دقیقاً با Origin مرورگر برابر باشد. فایل محلی با Origin: null پذیرفته نمی‌شود.</td></tr><tr><td>Worker پیدا نمی‌شود / Failed to fetch</td><td>نام و آدرس Worker، Deploy، DNS و دسترسی شبکه به workers.dev را بررسی کن.</td></tr><tr><td>502 با Kick channel HTTP 404</td><td>slug کانال اشتباه است؛ نام نمایشی و شناسهٔ کانال یکسان فرض نشوند. URL واقعی کانال را وارد کن.</td></tr><tr><td>502 با HTTP 403 از Kick</td><td>درخواست خروجی Worker توسط سرویس بالادستی رد شده است؛ این خطا با خطای origin مرورگر متفاوت است.</td></tr><tr><td>bootstrap موفق، WebSocket ناموفق</td><td>در Network → WS مسیر /chat/socket را بررسی کن؛ فیلتر شبکه، handshake و خطای gateway مهم‌اند.</td></tr><tr><td>متصل، ولی لینک وارد صف نمی‌شود</td><td>شمارندهٔ پیام دریافتی، نام کانال، انتخاب منبع، لینک تکراری، قفل ورودی و سقف لینک‌ها را بررسی کن.</td></tr><tr><td>بعد از مدتی قطع می‌شود</td><td>Heartbeat، تمدید توکن، sleep شدن دستگاه و reconnect را بررسی کن.</td></tr><tr><td>چند بار دریافت می‌شود</td><td>فقط یک کلاینت فعال بساز، قبل از تعویض کانال close کن و dedup بر اساس message.id داشته باش.</td></tr></table></div><div class="note">اتصال، دریافت پیام و پذیرفته‌شدن آن توسط منطق برنامه سه مرحلهٔ جدا هستند. در ChatBattle متن دقیق 1 یا 2 فقط هنگام رأی‌گیری فعال شمرده می‌شود؛ در instaQ متن باید لینک معتبر از منبع فعال داشته باشد. فیلتر رأی ChatBattle را به برنامهٔ دریافت لینک منتقل نکن.</div></section>
+<section><h2>۹. منابع و کد پروژه</h2><ul><li><a href="https://github.com/Ahmadramzy1/instaQ">سورس instaQ</a> — فایل‌های instaQ.html، kick-realtime.js و worker/worker.mjs.</li><li><a href="https://centrifugal.dev/docs/transports/client_protocol">پروتکل رسمی Centrifugo</a> — connect، subscribe، framing، heartbeat و refresh.</li><li><a href="https://developers.cloudflare.com/workers/examples/websockets/">WebSocket در Cloudflare Workers</a> و <a href="https://developers.cloudflare.com/workers/runtime-apis/response/">پاسخ Upgrade و relay</a>.</li><li><a href="https://github.com/KickEngineering/KickDevDocs/blob/main/events/introduction.md">مسیر رسمی جایگزین Kick: Events/Webhooks</a> — برای معماری مبتنی بر chat.message.sent، مستقل از مسیر داخلی وب‌سایت.</li></ul></section><footer>راهنمای مستقل قابل ارسال • بدون فونت و اسکریپت خارجی • نمونه‌های کد برای کپی و اجرا در پروژهٔ خودتان هستند.</footer></main><script>document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{const text=document.getElementById(button.dataset.copy).textContent;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);}else{const input=document.createElement('textarea');input.value=text;input.style.position='fixed';input.style.opacity='0';document.body.append(input);input.select();const ok=document.execCommand('copy');input.remove();if(!ok)throw Error('copy');}button.textContent='کپی شد';}catch{button.textContent='کد را انتخاب و کپی کن';}setTimeout(()=>button.textContent='کپی کد',2500);}));
+</script></body></html>
